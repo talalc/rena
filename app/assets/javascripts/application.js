@@ -15,3 +15,4 @@
 //= require underscore
 //= require backbone
 //= require three
+//= require stats.min
