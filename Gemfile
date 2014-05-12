@@ -36,3 +36,24 @@ gem 'spring',        group: :development
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
+group :development, :test do
+# sets rails console to open in pry instead of irb
+# https://github.com/rweng/pry-rails
+  gem 'pry-rails'
+# rspec for rails. set up with `rails g rpsec:install`
+# https://github.com/rspec/rspec-rails
+  gem 'rspec-rails'
+# one liners to test common rails functionality
+# https://github.com/thoughtbot/shoulda-matchers
+  gem 'shoulda-matchers'
+  gem 'capybara'
+# https://github.com/ctran/annotate_models
+  gem 'annotate', ">=2.6.0"
+  gem "rails-erd"
+end
+
+gem 'rails_12factor', group: :production
+
+# gem "paperclip", "~> 4.1"
+
+ruby "2.1.0"
