@@ -81,28 +81,33 @@ var Character = Backbone.Model.extend({
   },
 
   punch1: function(){
-    var p1punch = new THREE.Mesh( new THREE.SphereGeometry(5), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ) );
-    p1punch.position.setFromMatrixPosition( p1.hands.left.matrixWorld );
-    scene.add( p1punch);
     setTimeout( function(){
-      scene.remove( p1punch );
-    }, 1000);
+      scene.remove( punch1 );
+    }, 800);
+    this.punchanim1();
+    var _this = this;
+    setTimeout(function(){
+      _this.punchanim2();
+    }, 800);
+    var punch1 = new THREE.Mesh( new THREE.SphereGeometry(5), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ) );
+    punch1.position.setFromMatrixPosition( this.hands.left.matrixWorld );
+    scene.add( punch1);
   },
 
   punch2: function(){
     var matrix = new THREE.Matrix4();
-    matrix.extractRotation( p1.mesh.matrix );
+    matrix.extractRotation( this.mesh.matrix );
     var direction = new THREE.Vector3( 0, 0, 1 );
     direction.applyMatrix4( matrix );
-    var p1punch = new THREE.Mesh( new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ) );
-    p1punch.position.set(p1.mesh.position.x, p1.mesh.position.y, p1.mesh.position.z);
-    scene.add( p1punch);
+    var punch2 = new THREE.Mesh( new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ) );
+    punch2.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z);
+    scene.add( punch2);
     var punchinterval = setInterval(function() {
-      p1punch.translateOnAxis(direction, 5);
+      punch2.translateOnAxis(direction, 5);
     }, 100);
     setTimeout( function(){
       clearInterval(punchinterval)
-      scene.remove( p1punch );
+      scene.remove( punch2 );
     }, 1000);
   },
 
@@ -126,5 +131,26 @@ var Character = Backbone.Model.extend({
     setTimeout( function(){
       clearInterval(step2);
     }, 400);
+  },
+
+  punchanim1: function(){
+    var _this = this;
+    var step1 = setInterval(function() {
+      _this.hands.left.position.z += 7;
+    }, 100);
+    setTimeout( function(){
+      clearInterval(step1);
+    }, 400);
+  },
+
+  punchanim2: function(){
+    var _this = this;
+    var step2 = setInterval(function() {
+      _this.hands.left.position.z -= 7;
+    }, 100);
+    setTimeout( function(){
+      clearInterval(step2);
+    }, 400);
   }
+
 });
