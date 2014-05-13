@@ -1,4 +1,4 @@
-var scene, camera, renderer, cube, p1pointer, p1vector;
+var scene, camera, renderer, collidableMeshList, cube, p1pointer, p1vector;
 var Game = {
 
   initialize: function(){
@@ -104,6 +104,18 @@ var Game = {
     sprite.scale.set(100, 100, 1.0);
     mesh.add(sprite); // this centers the glow at the mesh
 
+    // BOUNDARY
+    var wireMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+    var boundaryGem= new THREE.BoxGeometry( 250, 250, 250, 8, 8, 8 );
+    boundary = new THREE.Mesh( boundaryGem, wireMaterial );
+    boundary.rotation.y  = Math.PI / 4;
+    boundary.position.y = 120;
+    scene.add(boundary);
+
+    // Initialize collision array
+    collidableMeshList = [];
+    collidableMeshList.push(boundary);
+
     // var loader = new THREE.JSONLoader();
     // loader.load('models/fleur.js', function(geometry2){
     //   mesh = new THREE.Mesh(geometry2);
@@ -129,6 +141,23 @@ function update(){
   cube.lookAt(p1pointer.position);
   // controller updates
   controls();
+  // collision detection
+  // collisions();
   // fps update
   stats.update();
+}
+
+function collisions(){
+  var originPoint = cube.position.clone();
+  for (var vertexIndex = 0; vertexIndex < cube.geometry.vertices.length; vertexIndex++){
+    var localVertex = cube.geometry.vertices[vertexIndex].clone();
+    var globalVertex = localVertex.applyMatrix4( cube.matrix );
+    var directionVector = globalVertex.sub( cube.position );
+    var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+    var collisionResults = ray.intersectObjects( collidableMeshList );
+    if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
+      // console.log("hit");
+      cube.position.set(cube.position.x,cube.position.y, cube.position.z);
+    }
+  }
 }
