@@ -40,7 +40,7 @@ var Game = {
 
     // LIGHT
     var light = new THREE.PointLight(0xffffff);
-    light.position.set(100,250,100);
+    light.position.set(100,200,100);
     scene.add(light);
 
     // FLOOR
@@ -106,16 +106,38 @@ var Game = {
 
     // BOUNDARY
     var wireMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-    var boundaryGem= new THREE.BoxGeometry( 250, 250, 250, 8, 8, 8 );
+    var boundaryGem= new THREE.BoxGeometry( 250, 250, 20);
     boundary = new THREE.Mesh( boundaryGem, wireMaterial );
     boundary.rotation.y  = Math.PI / 4;
     boundary.position.y = 120;
+    boundary.position.z = -90;
+    boundary.position.x = -90;
     scene.add(boundary);
 
     // Initialize collision array
     collidableMeshList = [];
     collidableMeshList.push(boundary);
 
+    boundary2 = boundary.clone();
+    boundary2.position.z = +90;
+    boundary2.position.x = +90;
+    scene.add(boundary2);
+    collidableMeshList.push(boundary2);
+
+
+    boundary3 = boundary.clone();
+    boundary3.rotation.y = (Math.PI/4)*-1
+    boundary3.position.z = -90;
+    boundary3.position.x = 90;
+    scene.add(boundary3);
+    collidableMeshList.push(boundary3);
+
+    boundary4 = boundary.clone();
+    boundary4.rotation.y = (Math.PI/4)*-1
+    boundary4.position.z = 90;
+    boundary4.position.x = -90;
+    scene.add(boundary4);
+    collidableMeshList.push(boundary4);
     // var loader = new THREE.JSONLoader();
     // loader.load('models/fleur.js', function(geometry2){
     //   mesh = new THREE.Mesh(geometry2);
@@ -139,10 +161,10 @@ function update(){
   // camera, misc rotation update
   camera.lookAt( cube.position );
   cube.lookAt(p1pointer.position);
+  // collision detection
+  collisions();
   // controller updates
   controls();
-  // collision detection
-  // collisions();
   // fps update
   stats.update();
 }
@@ -156,7 +178,7 @@ function collisions(){
     var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
     var collisionResults = ray.intersectObjects( collidableMeshList );
     if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
-      // console.log("hit");
+      console.log("hit");
       cube.position.set(cube.position.x,cube.position.y, cube.position.z);
     }
   }
