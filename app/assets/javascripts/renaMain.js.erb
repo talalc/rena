@@ -128,6 +128,7 @@ var Game = {
     p1pointer = new THREE.Mesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.5 } ) );
     p1pointer.position.set(p1.mesh.position.x , p1.mesh.position.y, p1.mesh.position.z );
     scene.add( p1pointer);
+    $("<div>").attr('id','p1hp').css({ position:'absolute', height:'20px', bottom: '2px', left: '2px'}).css('background-color','green').appendTo("body");
 
     // var loader = new THREE.JSONLoader();
     // loader.load('models/fleur.js', function(geometry2){
@@ -156,6 +157,8 @@ function update(){
   collisions();
   // controller updates
   controls();
+  // hp updates
+  $("#p1hp").css('width', p1.hp );
   // fps update
   stats.update();
 }
@@ -170,6 +173,7 @@ function collisions(){
     var collisionResults = ray.intersectObjects( collidableMeshList );
     if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
       console.log("hit");
+      p1.hp -= 0.5;
       p1.mesh.position.set(p1.mesh.position.x,p1.mesh.position.y, p1.mesh.position.z);
     }
   }

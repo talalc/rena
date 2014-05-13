@@ -48,6 +48,8 @@ var Character = Backbone.Model.extend({
         this.direction = new THREE.Vector3(0, 0, 0);
         // Set the current animation step
         this.step = 0;
+        // Added Hp
+        this.hp = 100;
     },
     walk: function(){
       p1step1();
