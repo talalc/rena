@@ -27,11 +27,11 @@ function controls(){
     // 360 control
     if ( Math.abs(pad1.axes[0]) > 0.2 ){
       p1.mesh.position.x += pad1.axes[0];
-      p1pointer.position.set(p1.mesh.position.x + pad1.axes[0]*15, p1.mesh.position.y, p1.mesh.position.z + pad1.axes[1]*15);
+      p1.pointer.position.set(p1.mesh.position.x + pad1.axes[0]*15, p1.mesh.position.y, p1.mesh.position.z + pad1.axes[1]*15);
     }
     if ( Math.abs(pad1.axes[1]) > 0.2 ){
       p1.mesh.position.z += pad1.axes[1];
-      p1pointer.position.set(p1.mesh.position.x + pad1.axes[0]*15, p1.mesh.position.y, p1.mesh.position.z + pad1.axes[1]*15);
+      p1.pointer.position.set(p1.mesh.position.x + pad1.axes[0]*15, p1.mesh.position.y, p1.mesh.position.z + pad1.axes[1]*15);
     }
     if (pad1.buttons[0] == 1 || pad1.buttons[0].value == 1){
       p1.jump();
@@ -51,11 +51,11 @@ function controls(){
     // 360 control
     if ( Math.abs(pad2.axes[0]) > 0.2 ){
       p2.mesh.position.x += pad2.axes[0];
-      p2pointer.position.set(p2.mesh.position.x + pad2.axes[0]*15, p2.mesh.position.y, p2.mesh.position.z + pad2.axes[1]*15);
+      p2.pointer.position.set(p2.mesh.position.x + pad2.axes[0]*15, p2.mesh.position.y, p2.mesh.position.z + pad2.axes[1]*15);
     }
     if ( Math.abs(pad2.axes[1]) > 0.2 ){
       p2.mesh.position.z += pad2.axes[1];
-      p2pointer.position.set(p2.mesh.position.x + pad2.axes[0]*15, p2.mesh.position.y, p2.mesh.position.z + pad2.axes[1]*15);
+      p2.pointer.position.set(p2.mesh.position.x + pad2.axes[0]*15, p2.mesh.position.y, p2.mesh.position.z + pad2.axes[1]*15);
     }
     if (pad2.buttons[0] == 1 || pad2.buttons[0].value == 1){
       p2.jump();

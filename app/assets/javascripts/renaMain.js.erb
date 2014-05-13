@@ -1,4 +1,16 @@
-var scene, camera, renderer, collidableMeshList, p1, p1pointer, p2, p2pointer;
+// requestAnim shim layer by Paul Irish
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          window.oRequestAnimationFrame      ||
+          window.msRequestAnimationFrame     ||
+          function(/* function */ callback, /* DOMElement */ element){
+            window.setTimeout(callback, 1000 / 60);
+          };
+})();
+// GLOBAL VARIABLES
+var scene, camera, renderer, collidableMeshList, p1, p2;
 var Game = {
 
   initialize: function(){
@@ -89,7 +101,7 @@ var Game = {
     var boundaryGem= new THREE.BoxGeometry( 250, 250, 20);
     boundary = new THREE.Mesh( boundaryGem, wireMaterial );
     boundary.rotation.y  = Math.PI / 4;
-    boundary.position.y = 120;
+    boundary.position.y = 90;
     boundary.position.z = -90;
     boundary.position.x = -90;
     scene.add(boundary);
@@ -124,10 +136,6 @@ var Game = {
     p1.mesh.position.y = 15;
     p1.mesh.position.z = 85;
     scene.add(p1.mesh);
-    // PLAYER 1 ROTATION POINTER
-    p1pointer = new THREE.Mesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.5 } ) );
-    p1pointer.position.set(p1.mesh.position.x , p1.mesh.position.y, p1.mesh.position.z );
-    scene.add( p1pointer);
     $("<div>").attr('id','p1hp').text("Player 1").css({ position:'absolute', textAlign: 'center', height:'20px', bottom: '2px', left: '2px'}).css('background-color','green').appendTo("body");
 
     // PLAYER 2
@@ -137,10 +145,6 @@ var Game = {
     p2.mesh.position.x = 35;
     p2.mesh.position.z = 50;
     scene.add(p2.mesh);
-    // PLAYER 2 ROTATION POINTER
-    p2pointer = new THREE.Mesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.5 } ) );
-    p2pointer.position.set(p2.mesh.position.x , p2.mesh.position.y, p2.mesh.position.z );
-    scene.add( p2pointer);
     $("<div>").attr('id','p2hp').text("Player 2").css({ position:'absolute', textAlign: 'center', height:'20px', bottom: '2px', left: '104px'}).css('background-color','blue').appendTo("body");
 
     // var loader = new THREE.JSONLoader();
@@ -151,13 +155,17 @@ var Game = {
     //   scene.add(mesh);
     // });
 
-    animate();
+    animloop();
   } // end init
 
 } // end Game
 
-function animate(){
-  requestAnimationFrame( animate );
+function animloop(){
+  requestAnimFrame(animloop);
+  render();
+};
+
+function render(){
   renderer.render( scene, camera );
   update();
 }
@@ -170,8 +178,10 @@ function update(){
     camera.fov = zoom;
   }
   camera.updateProjectionMatrix();
-  p1.mesh.lookAt(p1pointer.position);
-  p2.mesh.lookAt(p2pointer.position);
+  p1.pointer.position.setY(p1.mesh.position.y);
+  p1.mesh.lookAt(p1.pointer.position);
+  p2.pointer.position.setY(p2.mesh.position.y);
+  p2.mesh.lookAt(p2.pointer.position);
   // collision detection
   collisions();
   // controller updates
