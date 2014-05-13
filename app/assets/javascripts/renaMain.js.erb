@@ -1,4 +1,4 @@
-var scene, camera, renderer, collidableMeshList, cube, p1pointer, p1vector;
+var scene, camera, renderer, collidableMeshList, cube, p1pointer;
 var Game = {
 
   initialize: function(){
@@ -34,9 +34,6 @@ var Game = {
     p1pointer.position.set(cube.position.x , cube.position.y, cube.position.z );
     scene.add( p1pointer);
     // cube.add(p1pointer);
-    // test vector for test cube
-    p1vector = new THREE.Vector3( 0, 0, 0 );
-    cube.add(p1vector);
 
     // LIGHT
     var light = new THREE.PointLight(0xffffff);

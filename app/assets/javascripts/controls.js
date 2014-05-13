@@ -29,13 +29,11 @@ function controls(){
       cube.position.x += pad1.axes[0];
       // cube.position.z -= pad1.axes[0];
       p1pointer.position.set(cube.position.x + pad1.axes[0]*3, cube.position.y, cube.position.z + pad1.axes[1]*3);
-      p1vector.set( pad1.axes[0], pad1.axes[1], 0);
     }
     if ( Math.abs(pad1.axes[1]) > 0.2 ){
       // cube.position.x += pad1.axes[1];
       cube.position.z += pad1.axes[1];
       p1pointer.position.set(cube.position.x + pad1.axes[0]*3, cube.position.y, cube.position.z + pad1.axes[1]*3);
-      p1vector.set( pad1.axes[0], pad1.axes[1], 0);
     }
     if (pad1.buttons[0] == 1 || pad1.buttons[0].value == 1){
       p1jump();
