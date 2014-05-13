@@ -45,7 +45,9 @@ function controls(){
     }
     if (pad1.buttons[2] == 1 || pad1.buttons[2].value == 1){
       p1punch();
-      // modelpunch();
+    }
+    if (pad1.buttons[3] == 1 || pad1.buttons[3].value == 1){
+      modelpunch();
     }
     //  360 dpad
     // if (pad1.axes[5] == 1){

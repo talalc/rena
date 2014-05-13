@@ -35,6 +35,35 @@ function p1punch(){
   }, 1000);
 }
 
+function modelpunch(){
+  var p1punch = new THREE.Mesh( new THREE.SphereGeometry(5), new THREE.MeshBasicMaterial( { color: 0x0000FF } ) );
+  p1punch.position.setFromMatrixPosition( c1.hands.left.matrixWorld );
+  scene.add( p1punch);
+  setTimeout( function(){
+    scene.remove( p1punch );
+  }, 1000);
+}
+
+function p1step1(){
+  var step1 = setInterval(function() {
+    c1.feet.left.position.z += 5;
+    c1.feet.right.position.z -= 5;
+  }, 100);
+  setTimeout( function(){
+    clearInterval(step1);
+  }, 400);
+}
+
+function p1step2(){
+  var step2 = setInterval(function() {
+    c1.feet.left.position.z -= 5;
+    c1.feet.right.position.z += 5;
+  }, 100);
+  setTimeout( function(){
+    clearInterval(step2);
+  }, 400);
+}
+
 // function modelpunch(){
 //   var p1punch = new THREE.Mesh( new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial( { color: 0x0000FF } ) );
 //   p1punch.position.set( mesh.position.x -15 , mesh.position.y - 5, mesh.position.z-10);
