@@ -34,31 +34,48 @@ function controls(){
       p1pointer.position.set(p1.mesh.position.x + pad1.axes[0]*15, p1.mesh.position.y, p1.mesh.position.z + pad1.axes[1]*15);
     }
     if (pad1.buttons[0] == 1 || pad1.buttons[0].value == 1){
-      p1jump();
+      p1.jump();
       setTimeout(function(){
-        p1fall();
+        p1.fall();
       }, 400);
     }
     if (pad1.buttons[2] == 1 || pad1.buttons[2].value == 1){
-      p1punch();
+      p1.punch1();
     }
     if (pad1.buttons[3] == 1 || pad1.buttons[3].value == 1){
-      modelpunch();
+      p1.punch2();
     }
-    //  360 dpad
+  } // end if first controller found
+  if (gamepads.length > 1){
+    pad2 = gamepads[1];
+    // 360 control
+    if ( Math.abs(pad2.axes[0]) > 0.2 ){
+      p2.mesh.position.x += pad2.axes[0];
+      p2pointer.position.set(p2.mesh.position.x + pad2.axes[0]*15, p2.mesh.position.y, p2.mesh.position.z + pad2.axes[1]*15);
+    }
+    if ( Math.abs(pad2.axes[1]) > 0.2 ){
+      p2.mesh.position.z += pad2.axes[1];
+      p2pointer.position.set(p2.mesh.position.x + pad2.axes[0]*15, p2.mesh.position.y, p2.mesh.position.z + pad2.axes[1]*15);
+    }
+    if (pad2.buttons[0] == 1 || pad2.buttons[0].value == 1){
+      p2.jump();
+      setTimeout(function(){
+        p2.fall();
+      }, 400);
+    }
+    if (pad2.buttons[2] == 1 || pad2.buttons[2].value == 1){
+      p2.punch1();
+    }
+    if (pad2.buttons[3] == 1 || pad2.buttons[3].value == 1){
+      p2.punch2();
+    }
+  } // end if second controller found
+
+    //  360 dpad - in case would like to add support
     // if (pad1.axes[5] == 1){
-    //   p1.mesh.position.x += 1;
-    //   p1.mesh.position.z -= 1;
     // } else if (pad1.axes[5] == -1){
-    //   p1.mesh.position.x -= 1;
-    //   p1.mesh.position.z += 1;
     // }
     // if (pad1.axes[6] == 1){
-    //   p1.mesh.position.x += 1;
-    //   p1.mesh.position.z += 1;
     // } else if (pad1.axes[6] == -1){
-    //   p1.mesh.position.x -= 1;
-    //   p1.mesh.position.z -= 1;
     // }
-  } // end if first controller found
 }
