@@ -4,18 +4,16 @@ var Game = {
   initialize: function(){
     // SCENE
     scene = new THREE.Scene();
-    scene.add(new THREE.AxisHelper(100));
-    scene.add(new THREE.GridHelper(100,10));
+    // scene.add(new THREE.AxisHelper(100));
+    // scene.add(new THREE.GridHelper(100,10));
     // CAMERA
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 4000 );
     camera.position.set(0,65,150);
     camera.lookAt(scene.position);
-
     // RENDERER
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
     $("body").append( renderer.domElement );
-
     // STATS
     stats = new Stats();
     stats.domElement.style.position = 'absolute';
@@ -23,23 +21,20 @@ var Game = {
     stats.domElement.style.left = '2px';
     stats.domElement.style.zIndex = 100;
     $("body").append( stats.domElement );
-
     // TEST CUBE
     var geometry = new THREE.BoxGeometry(4,4,4);
     var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.5 } );
     cube = new THREE.Mesh( geometry, material );
+    cube.position.setZ(85);
     scene.add( cube );
-    // pointer sphere for test cube
+    // TEST CUBE ROTATION POINTER
     p1pointer = new THREE.Mesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.5 } ) );
     p1pointer.position.set(cube.position.x , cube.position.y, cube.position.z );
     scene.add( p1pointer);
-    // cube.add(p1pointer);
-
     // LIGHT
     var light = new THREE.PointLight(0xffffff);
     light.position.set(100,200,100);
     scene.add(light);
-
     // FLOOR
     var floorTexture = new THREE.ImageUtils.loadTexture( '<%= asset_path 'sand_texture1023.jpg' %>' );
     floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
@@ -51,7 +46,6 @@ var Game = {
     floor.rotation.x = Math.PI / 2;
     floor.rotation.z = Math.PI / 4;
     scene.add(floor);
-
     // SKYBOX
     var skyGeometry = new THREE.BoxGeometry( 1000, 1000, 1000 );
     var materialArray = [];
@@ -84,25 +78,24 @@ var Game = {
     scene.add( skyBox );
 
     // CUSTOM
-    var geometry = new THREE.SphereGeometry( 15, 15, 8 );
-    var material = new THREE.MeshLambertMaterial( { color: 0x000088, transparent: true, opacity: 0.5 } );
-    mesh = new THREE.Mesh( geometry, material );
-    mesh.position.set(0,80,0);
-    scene.add(mesh);
-
+    // var geometry = new THREE.SphereGeometry( 15, 15, 8 );
+    // var material = new THREE.MeshLambertMaterial( { color: 0x000088, transparent: true, opacity: 0.5 } );
+    // mesh = new THREE.Mesh( geometry, material );
+    // mesh.position.set(0,80,0);
+    // scene.add(mesh);
     // SUPER SIMPLE GLOW EFFECT
     // use sprite because it appears the same from all angles
-    var spriteMaterial = new THREE.SpriteMaterial({
-      map: new THREE.ImageUtils.loadTexture( '<%= asset_path 'glow.png' %>' ),
-      useScreenCoordinates: false,
-      color: 0x0000ff, transparent: false, blending: THREE.AdditiveBlending
-    });
-    var sprite = new THREE.Sprite( spriteMaterial );
-    sprite.scale.set(100, 100, 1.0);
-    mesh.add(sprite); // this centers the glow at the mesh
+    // var spriteMaterial = new THREE.SpriteMaterial({
+    //   map: new THREE.ImageUtils.loadTexture( '<%= asset_path 'glow.png' %>' ),
+    //   useScreenCoordinates: false,
+    //   color: 0x0000ff, transparent: false, blending: THREE.AdditiveBlending
+    // });
+    // var sprite = new THREE.Sprite( spriteMaterial );
+    // sprite.scale.set(100, 100, 1.0);
+    // mesh.add(sprite); // this centers the glow at the mesh
 
-    // BOUNDARY walls
-    var wireMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+    // BOUNDARY WALLS
+    var wireMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true } );
     var boundaryGem= new THREE.BoxGeometry( 250, 250, 20);
     boundary = new THREE.Mesh( boundaryGem, wireMaterial );
     boundary.rotation.y  = Math.PI / 4;
@@ -111,37 +104,35 @@ var Game = {
     boundary.position.x = -90;
     scene.add(boundary);
 
-    // Initialize collision array
-    collidableMeshList = [];
-    collidableMeshList.push(boundary);
-
     boundary2 = boundary.clone();
     boundary2.position.z = +90;
     boundary2.position.x = +90;
     scene.add(boundary2);
-    collidableMeshList.push(boundary2);
-
 
     boundary3 = boundary.clone();
     boundary3.rotation.y = (Math.PI/4)*-1
     boundary3.position.z = -90;
     boundary3.position.x = 90;
     scene.add(boundary3);
-    collidableMeshList.push(boundary3);
 
     boundary4 = boundary.clone();
     boundary4.rotation.y = (Math.PI/4)*-1
     boundary4.position.z = 90;
     boundary4.position.x = -90;
     scene.add(boundary4);
+
+    // Initialize collision array
+    collidableMeshList = [];
+    collidableMeshList.push(boundary);
+    collidableMeshList.push(boundary2);
+    collidableMeshList.push(boundary3);
     collidableMeshList.push(boundary4);
 
     // character
-    c1 = new Character( { color: 0x7A43B6 } );
+    c1 = new Character( { color: 0x00FF00 } );
     c1.mesh.scale.set(0.25,0.25,0.25);
     c1.mesh.position.y = 15;
-    c1.mesh.position.x = 5;
-    c1.mesh.position.z = 5;
+    c1.mesh.position.setZ(85);
     scene.add(c1.mesh);
 
     // var loader = new THREE.JSONLoader();

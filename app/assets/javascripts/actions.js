@@ -23,7 +23,7 @@ function p1punch(){
   matrix.extractRotation( cube.matrix );
   var direction = new THREE.Vector3( 0, 0, 1 );
   direction.applyMatrix4( matrix );
-  var p1punch = new THREE.Mesh( new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial( { color: 0x0000FF } ) );
+  var p1punch = new THREE.Mesh( new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ) );
   p1punch.position.set(cube.position.x, cube.position.y, cube.position.z);
   scene.add( p1punch);
   var punchinterval = setInterval(function() {
@@ -36,7 +36,7 @@ function p1punch(){
 }
 
 function modelpunch(){
-  var p1punch = new THREE.Mesh( new THREE.SphereGeometry(5), new THREE.MeshBasicMaterial( { color: 0x0000FF } ) );
+  var p1punch = new THREE.Mesh( new THREE.SphereGeometry(5), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ) );
   p1punch.position.setFromMatrixPosition( c1.hands.left.matrixWorld );
   scene.add( p1punch);
   setTimeout( function(){
