@@ -8,6 +8,7 @@ var Character = Backbone.Model.extend({
         nose = new THREE.SphereGeometry(4, 4, 4),
         // Set the material, the "skin"
         material = new THREE.MeshLambertMaterial(args);
+    this.args = args;
     // Set the character modelisation object
     this.mesh = new THREE.Object3D();
     this.mesh.position.y = 48;
@@ -118,7 +119,7 @@ var Character = Backbone.Model.extend({
 
   punch1: function(){
     this.punchanim1();
-    var punch1 = new THREE.Mesh( new THREE.SphereGeometry(5), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ) );
+    var punch1 = new THREE.Mesh( new THREE.SphereGeometry(5), new THREE.MeshBasicMaterial(this.args) );
     punch1.position.setFromMatrixPosition( this.hands.left.matrixWorld );
     this.hitMeshes.push(punch1);
     scene.add( punch1);
@@ -135,7 +136,7 @@ var Character = Backbone.Model.extend({
     matrix.extractRotation( this.mesh.matrix );
     var direction = new THREE.Vector3( 0, 0, 1 );
     direction.applyMatrix4( matrix );
-    var punch2 = new THREE.Mesh( new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ) );
+    var punch2 = new THREE.Mesh( new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial(this.args) );
     punch2.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z);
     this.hitMeshes.push(punch2);
     scene.add( punch2);
