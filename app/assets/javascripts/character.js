@@ -50,17 +50,47 @@ var Character = Backbone.Model.extend({
     this.step = 0;
     // Added Health Points
     this.hp = 100;
-
+    // Pointer to set rotation towards
     this.pointer = new THREE.Mesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.5 } ) );
     this.pointer.position.set(this.mesh.position.x , this.mesh.position.y, this.mesh.position.z );
     scene.add(this.pointer);
+    // Walking boolean
+    this.isWalking = false;
+  },
+  control: function(){
+    if ( Math.abs(this.pad.axes[0]) > 0.2 || Math.abs(this.pad.axes[1]) > 0.2 ){
+      this.move(this.pad.axes[0],this.pad.axes[1]);
+    }
+    if (this.pad.buttons[0] == 1 || this.pad.buttons[0].value == 1){
+      this.jump();
+      var _this = this;
+      setTimeout(function(){
+        _this.fall();
+      }, 400);
+    }
+    if (this.pad.buttons[2] == 1 || this.pad.buttons[2].value == 1){
+      this.punch1();
+    }
+    if (this.pad.buttons[3] == 1 || this.pad.buttons[3].value == 1){
+      this.punch2();
+    }
+  },
+  move: function(deltaX, deltaZ){
+    this.walk();
+    this.mesh.position.x += deltaX;
+    this.mesh.position.z += deltaZ;
+    this.pointer.position.set(this.mesh.position.x + deltaX*15, this.mesh.position.y, this.mesh.position.z + deltaZ*15);
   },
   walk: function(){
-    this.step1();
-    var _this = this;
-    setTimeout(function(){
-      _this.step2();
-    }, 400);
+    if (!this.isWalking){
+      this.isWalking = true;
+      this.step1();
+      var _this = this;
+      setTimeout(function(){
+        _this.step2();
+        _this.isWalking = false;
+      }, 400);
+    }
   },
   jump: function(){
     var _this = this;

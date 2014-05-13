@@ -155,6 +155,8 @@ var Game = {
     //   scene.add(mesh);
     // });
 
+
+
     animloop();
   } // end init
 
@@ -186,6 +188,8 @@ function update(){
   collisions();
   // controller updates
   controls();
+  p1.control();
+  p2.control();
   // hp updates
   $("#p1hp").css('width', p1.hp );
   $("#p2hp").css('width', p2.hp );
