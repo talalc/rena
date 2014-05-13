@@ -164,8 +164,11 @@ function animate(){
 
 function update(){
   // camera, misc rotation update
-  camera.lookAt( p1.mesh.position );
-
+  // camera.lookAt( p1.mesh.position );
+  camera.lookAt( new THREE.Vector3((p1.mesh.position.x + p2.mesh.position.x)/2, (p1.mesh.position.y + p2.mesh.position.y)/2, (p1.mesh.position.z + p2.mesh.position.z)/2));
+  camera.fov = p1.mesh.position.distanceTo(p2.mesh.position)*0.5;
+  camera.updateProjectionMatrix();
+  // camera.lookAt( p2.mesh.position );
   p1.mesh.lookAt(p1pointer.position);
   p2.mesh.lookAt(p2pointer.position);
   // collision detection
