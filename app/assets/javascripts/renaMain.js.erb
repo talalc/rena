@@ -136,7 +136,7 @@ var Game = {
     p1.mesh.position.y = 15;
     p1.mesh.position.z = 85;
     scene.add(p1.mesh);
-    $("<div>").attr('id','p1hp').text("Player 1").css({ position:'absolute', textAlign: 'center', height:'20px', bottom: '2px', left: '2px'}).css('background-color','green').appendTo("body");
+    $("<div>").attr('id','p1hp').text("Player 1").css({ position:'absolute', textAlign: 'center', height:'20px', bottom: '24px', backgroundColor: 'green'}).css('left',2).appendTo("body");
 
     // PLAYER 2
     p2 = new Character( { color: 0x0000FF, transparent: true, opacity: 0.5 } );
@@ -145,7 +145,7 @@ var Game = {
     p2.mesh.position.x = 35;
     p2.mesh.position.z = 50;
     scene.add(p2.mesh);
-    $("<div>").attr('id','p2hp').text("Player 2").css({ position:'absolute', textAlign: 'center', height:'20px', bottom: '2px', left: '104px'}).css('background-color','blue').appendTo("body");
+    $("<div>").attr('id','p2hp').text("Player 2").css({ position:'absolute', textAlign: 'center', height:'20px', bottom: '2px', backgroundColor: 'blue'}).css('left',2).appendTo("body");
 
     // var loader = new THREE.JSONLoader();
     // loader.load('models/fleur.js', function(geometry2){
@@ -154,8 +154,6 @@ var Game = {
     //   mesh.position.y= 50;
     //   scene.add(mesh);
     // });
-
-
 
     animloop();
   } // end init
@@ -185,7 +183,9 @@ function update(){
   p2.pointer.position.setY(p2.mesh.position.y);
   p2.mesh.lookAt(p2.pointer.position);
   // collision detection
-  collisions();
+  // collisions();
+  p1HitCollisions();
+  p2HitCollisions();
   // controller updates
   controls();
   p1.control();
@@ -195,6 +195,38 @@ function update(){
   $("#p2hp").css('width', p2.hp );
   // fps update
   stats.update();
+}
+
+function p1HitCollisions(){
+  var originPoint = p1.mesh.position.clone();
+  for (var vertexIndex = 0; vertexIndex < p1.head.geometry.vertices.length; vertexIndex++){
+    var localVertex = p1.head.geometry.vertices[vertexIndex].clone();
+    var globalVertex = localVertex.applyMatrix4( p1.mesh.matrix );
+    var directionVector = globalVertex.sub( p1.mesh.position );
+    var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+    var collisionResults = ray.intersectObjects( p2.hitMeshes );
+    if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
+      console.log("hit");
+      p1.hp -= 0.5;
+      p1.mesh.position.set(p1.mesh.position.x,p1.mesh.position.y, p1.mesh.position.z);
+    }
+  }
+}
+
+function p2HitCollisions(){
+  var originPoint = p2.mesh.position.clone();
+  for (var vertexIndex = 0; vertexIndex < p2.head.geometry.vertices.length; vertexIndex++){
+    var localVertex = p2.head.geometry.vertices[vertexIndex].clone();
+    var globalVertex = localVertex.applyMatrix4( p2.mesh.matrix );
+    var directionVector = globalVertex.sub( p2.mesh.position );
+    var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+    var collisionResults = ray.intersectObjects( p1.hitMeshes );
+    if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
+      console.log("hit");
+      p2.hp -= 0.5;
+      p2.mesh.position.set(p2.mesh.position.x,p2.mesh.position.y, p2.mesh.position.z);
+    }
+  }
 }
 
 function collisions(){

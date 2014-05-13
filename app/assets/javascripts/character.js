@@ -49,13 +49,15 @@ var Character = Backbone.Model.extend({
     // Set the current animation step
     this.step = 0;
     // Added Health Points
-    this.hp = 100;
+    this.hp = 1000;
     // Pointer to set rotation towards
     this.pointer = new THREE.Mesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.5 } ) );
     this.pointer.position.set(this.mesh.position.x , this.mesh.position.y, this.mesh.position.z );
     scene.add(this.pointer);
     // Walking boolean
     this.isWalking = false;
+    // Hit meshes array
+    this.hitMeshes = [];
   },
   control: function(){
     if ( Math.abs(this.pad.axes[0]) > 0.2 || Math.abs(this.pad.axes[1]) > 0.2 ){
@@ -115,17 +117,17 @@ var Character = Backbone.Model.extend({
   },
 
   punch1: function(){
-    setTimeout( function(){
-      scene.remove( punch1 );
-    }, 800);
     this.punchanim1();
+    var punch1 = new THREE.Mesh( new THREE.SphereGeometry(5), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ) );
+    punch1.position.setFromMatrixPosition( this.hands.left.matrixWorld );
+    this.hitMeshes.push(punch1);
+    scene.add( punch1);
     var _this = this;
     setTimeout(function(){
       _this.punchanim2();
+      _this.hitMeshes.pop();
+      scene.remove( punch1 );
     }, 800);
-    var punch1 = new THREE.Mesh( new THREE.SphereGeometry(5), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ) );
-    punch1.position.setFromMatrixPosition( this.hands.left.matrixWorld );
-    scene.add( punch1);
   },
 
   punch2: function(){
@@ -135,12 +137,15 @@ var Character = Backbone.Model.extend({
     direction.applyMatrix4( matrix );
     var punch2 = new THREE.Mesh( new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ) );
     punch2.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z);
+    this.hitMeshes.push(punch2);
     scene.add( punch2);
     var punchinterval = setInterval(function() {
       punch2.translateOnAxis(direction, 5);
     }, 100);
+    var _this = this;
     setTimeout( function(){
-      clearInterval(punchinterval)
+      clearInterval(punchinterval);
+      _this.hitMeshes.pop();
       scene.remove( punch2 );
     }, 1000);
   },
