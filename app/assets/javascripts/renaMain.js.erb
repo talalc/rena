@@ -1,4 +1,4 @@
-var scene, camera, renderer, collidableMeshList, cube, p1pointer;
+var scene, camera, renderer, collidableMeshList, p1, p1pointer;
 var Game = {
 
   initialize: function(){
@@ -21,16 +21,6 @@ var Game = {
     stats.domElement.style.left = '2px';
     stats.domElement.style.zIndex = 100;
     $("body").append( stats.domElement );
-    // TEST CUBE
-    var geometry = new THREE.BoxGeometry(4,4,4);
-    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.5 } );
-    cube = new THREE.Mesh( geometry, material );
-    cube.position.setZ(85);
-    scene.add( cube );
-    // TEST CUBE ROTATION POINTER
-    p1pointer = new THREE.Mesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.5 } ) );
-    p1pointer.position.set(cube.position.x , cube.position.y, cube.position.z );
-    scene.add( p1pointer);
     // LIGHT
     var light = new THREE.PointLight(0xffffff);
     light.position.set(100,200,100);
@@ -129,11 +119,15 @@ var Game = {
     collidableMeshList.push(boundary4);
 
     // character
-    c1 = new Character( { color: 0x00FF00 } );
-    c1.mesh.scale.set(0.25,0.25,0.25);
-    c1.mesh.position.y = 15;
-    c1.mesh.position.setZ(85);
-    scene.add(c1.mesh);
+    p1 = new Character( { color: 0x00FF00, transparent: true, opacity: 0.5 } );
+    p1.mesh.scale.set(0.25,0.25,0.25);
+    p1.mesh.position.y = 15;
+    p1.mesh.position.setZ(85);
+    scene.add(p1.mesh);
+    // TEST CUBE ROTATION POINTER
+    p1pointer = new THREE.Mesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.5 } ) );
+    p1pointer.position.set(p1.mesh.position.x , p1.mesh.position.y, p1.mesh.position.z );
+    scene.add( p1pointer);
 
     // var loader = new THREE.JSONLoader();
     // loader.load('models/fleur.js', function(geometry2){
@@ -156,10 +150,8 @@ function animate(){
 
 function update(){
   // camera, misc rotation update
-  camera.lookAt( cube.position );
-  cube.lookAt(p1pointer.position);
-  c1.mesh.position.set(cube.position.x,cube.position.y,cube.position.z);
-  c1.mesh.lookAt(p1pointer.position);
+  camera.lookAt( p1.mesh.position );
+  p1.mesh.lookAt(p1pointer.position);
   // collision detection
   collisions();
   // controller updates
@@ -169,16 +161,16 @@ function update(){
 }
 
 function collisions(){
-  var originPoint = cube.position.clone();
-  for (var vertexIndex = 0; vertexIndex < cube.geometry.vertices.length; vertexIndex++){
-    var localVertex = cube.geometry.vertices[vertexIndex].clone();
-    var globalVertex = localVertex.applyMatrix4( cube.matrix );
-    var directionVector = globalVertex.sub( cube.position );
+  var originPoint = p1.mesh.position.clone();
+  for (var vertexIndex = 0; vertexIndex < p1.head.geometry.vertices.length; vertexIndex++){
+    var localVertex = p1.head.geometry.vertices[vertexIndex].clone();
+    var globalVertex = localVertex.applyMatrix4( p1.mesh.matrix );
+    var directionVector = globalVertex.sub( p1.mesh.position );
     var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
     var collisionResults = ray.intersectObjects( collidableMeshList );
     if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
       console.log("hit");
-      cube.position.set(cube.position.x,cube.position.y, cube.position.z);
+      p1.mesh.position.set(p1.mesh.position.x,p1.mesh.position.y, p1.mesh.position.z);
     }
   }
 }

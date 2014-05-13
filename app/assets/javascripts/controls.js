@@ -26,14 +26,12 @@ function controls(){
     pad1 = gamepads[0];
     // 360 control
     if ( Math.abs(pad1.axes[0]) > 0.2 ){
-      cube.position.x += pad1.axes[0];
-      // cube.position.z -= pad1.axes[0];
-      p1pointer.position.set(cube.position.x + pad1.axes[0]*3, cube.position.y, cube.position.z + pad1.axes[1]*3);
+      p1.mesh.position.x += pad1.axes[0];
+      p1pointer.position.set(p1.mesh.position.x + pad1.axes[0]*15, p1.mesh.position.y, p1.mesh.position.z + pad1.axes[1]*15);
     }
     if ( Math.abs(pad1.axes[1]) > 0.2 ){
-      // cube.position.x += pad1.axes[1];
-      cube.position.z += pad1.axes[1];
-      p1pointer.position.set(cube.position.x + pad1.axes[0]*3, cube.position.y, cube.position.z + pad1.axes[1]*3);
+      p1.mesh.position.z += pad1.axes[1];
+      p1pointer.position.set(p1.mesh.position.x + pad1.axes[0]*15, p1.mesh.position.y, p1.mesh.position.z + pad1.axes[1]*15);
     }
     if (pad1.buttons[0] == 1 || pad1.buttons[0].value == 1){
       p1jump();
@@ -49,18 +47,18 @@ function controls(){
     }
     //  360 dpad
     // if (pad1.axes[5] == 1){
-    //   cube.position.x += 1;
-    //   cube.position.z -= 1;
+    //   p1.mesh.position.x += 1;
+    //   p1.mesh.position.z -= 1;
     // } else if (pad1.axes[5] == -1){
-    //   cube.position.x -= 1;
-    //   cube.position.z += 1;
+    //   p1.mesh.position.x -= 1;
+    //   p1.mesh.position.z += 1;
     // }
     // if (pad1.axes[6] == 1){
-    //   cube.position.x += 1;
-    //   cube.position.z += 1;
+    //   p1.mesh.position.x += 1;
+    //   p1.mesh.position.z += 1;
     // } else if (pad1.axes[6] == -1){
-    //   cube.position.x -= 1;
-    //   cube.position.z -= 1;
+    //   p1.mesh.position.x -= 1;
+    //   p1.mesh.position.z -= 1;
     // }
   } // end if first controller found
 }
