@@ -13,13 +13,13 @@ var Character = Backbone.Model.extend({
     this.mesh = new THREE.Object3D();
     this.mesh.position.y = 48;
     // Set and add its head
-    this.head = new THREE.Mesh(head, material);
+    this.head = new Physijs.SphereMesh(head, material, 15);
     this.head.position.y = 0;
     this.mesh.add(this.head);
     // Set and add its hands
     this.hands = {
-        left: new THREE.Mesh(hand, material),
-        right: new THREE.Mesh(hand, material)
+        left: new Physijs.SphereMesh(hand, material),
+        right: new Physijs.SphereMesh(hand, material)
     };
     this.hands.left.position.x = -40;
     this.hands.left.position.y = -8;
@@ -29,8 +29,8 @@ var Character = Backbone.Model.extend({
     this.mesh.add(this.hands.right);
     // Set and add its feet
     this.feet = {
-        left: new THREE.Mesh(foot, material),
-        right: new THREE.Mesh(foot, material)
+        left: new Physijs.SphereMesh(foot, material),
+        right: new Physijs.SphereMesh(foot, material)
     };
     this.feet.left.position.x = -20;
     this.feet.left.position.y = -48;
@@ -41,7 +41,7 @@ var Character = Backbone.Model.extend({
     this.mesh.add(this.feet.left);
     this.mesh.add(this.feet.right);
     // Set and add its nose
-    this.nose = new THREE.Mesh(nose, material);
+    this.nose = new Physijs.SphereMesh(nose, material);
     this.nose.position.y = 0;
     this.nose.position.z = 32;
     this.mesh.add(this.nose);

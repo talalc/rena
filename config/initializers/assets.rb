@@ -1,4 +1,6 @@
-Rails.application.config.assets.precompile += %w( three.js )
+# Rails.application.config.assets.precompile += %w( three.js )
+Rails.application.config.assets.precompile += %w( physijs_worker.js )
+Rails.application.config.assets.precompile += %w( ammo.js )
 Rails.application.config.assets.precompile += %w( renaMain.js )
 Rails.application.config.assets.precompile += %w( stats.min.js )
 Rails.application.config.assets.precompile += %w( character.js )
