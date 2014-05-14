@@ -167,6 +167,11 @@ var Game = {
     p2.pointer.position.set(camera.position.x,camera.position.y,camera.position.z);
     $("<div>").attr('id','p2hp').text("Player 2").css({ position:'absolute', textAlign: 'center', height:'20px', bottom: '2px', backgroundColor: 'blue'}).css('left',2).appendTo("body");
 
+    // Collision event
+    // p1.mesh.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+    // `this` has collided with `other_object` with an impact speed of `relative_velocity` and a rotational force of `relative_rotation` and at normal `contact_normal`
+    //   debugger;
+    // });
     // var loader = new THREE.JSONLoader();
     // loader.load('models/fleur.js', function(geometry2){
     //   mesh = new THREE.Mesh(geometry2);
@@ -232,14 +237,6 @@ function update(){
   // hp updates
   $("#p1hp").css('width', p1.hp );
   $("#p2hp").css('width', p2.hp );
-  // remove bl
-  // if (bl.length > 10){
-  //   scene.remove(bl.pop());
-  //   scene.remove(bl.pop());
-  //   scene.remove(bl.pop());
-  //   scene.remove(bl.pop());
-  //   scene.remove(bl.pop());
-  // }
   // fps update
   stats.update();
 }
