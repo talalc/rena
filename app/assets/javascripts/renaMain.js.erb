@@ -10,10 +10,11 @@ window.requestAnimFrame = (function(){
           };
 })();
 // GLOBAL VARIABLES
-var scene, camera, renderer, collidableMeshList, p1, p2, bl;
+var scene, camera, renderer, p1, p2, bl;
 var Game = {
 
   initialize: function(){
+
     // SCENE
     // scene = new THREE.Scene();
     scene = new Physijs.Scene();
@@ -21,32 +22,19 @@ var Game = {
     scene.addEventListener('update', function(){
       scene.simulate();
     });
-    // scene.add(new THREE.AxisHelper(100));
+    scene.add(new THREE.AxisHelper(100));
     // scene.add(new THREE.GridHelper(100,10));
-    var friction = .8; // high friction
-    var restitution = .3; // low restitution
-    var material = Physijs.createMaterial(
-        new THREE.MeshBasicMaterial({ color: 0x888888 }),
-        friction,
-        restitution
-    );
-    // Create a cube with friction of .8 and restitution of .3
-    var mesh = new Physijs.BoxMesh(
-        new THREE.BoxGeometry( 30, 30, 30 ),
-        material
-    );
-    mesh.position.y = 50;
-    mesh.position.x = 50;
-    mesh.position.z = 50;
-    scene.add(mesh);
+
     // CAMERA
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 4000 );
     camera.position.set(0,65,150);
-    camera.lookAt(scene.position);
+    // camera.lookAt(scene.position);
+
     // RENDERER
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
     $("body").append( renderer.domElement );
+
     // STATS
     stats = new Stats();
     stats.domElement.style.position = 'absolute';
@@ -54,7 +42,8 @@ var Game = {
     stats.domElement.style.left = '2px';
     stats.domElement.style.zIndex = 100;
     $("body").append( stats.domElement );
-    // LIGHT
+
+    // LIGHTS
     var light = new THREE.PointLight(0xffffff);
     light.position.set(100,200,100);
     scene.add(light);
@@ -64,6 +53,7 @@ var Game = {
     var l3 = new THREE.PointLight(0xffffff);
     l3.position.set(25,50,25);
     scene.add(l3);
+
     // FLOOR
     floor_material = Physijs.createMaterial(
       new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( '<%= asset_path 'sand_texture1023.jpg' %>' ), ambient: 0xFFFFFF }),
@@ -82,16 +72,7 @@ var Game = {
     floor.rotation.y = Math.PI / 4;
     floor.receiveShadow = true;
     scene.add( floor );
-    // var floorTexture = new THREE.ImageUtils.loadTexture( '<%= asset_path 'sand_texture1023.jpg' %>' );
-    // floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-    // floorTexture.repeat.set( 10, 10 );
-    // var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
-    // var floorGeometry = new THREE.PlaneGeometry(250, 250, 10, 10);
-    // var floor = new Physijs.PlaneMesh(floorGeometry, floorMaterial);
-    // floor.position.y = -17;
-    // floor.rotation.x = Math.PI / 2;
-    // floor.rotation.z = Math.PI / 4;
-    // scene.add(floor);
+
     // SKYBOX
     var skyGeometry = new THREE.BoxGeometry( 1000, 1000, 1000 );
     var materialArray = [];
@@ -123,7 +104,77 @@ var Game = {
     var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
     scene.add( skyBox );
 
-    // CUSTOM
+    // BOUNDARY WALLS
+    var wireMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true } );
+    var boundaryGem= new THREE.BoxGeometry( 250, 250, 20);
+    boundary1 = new Physijs.BoxMesh( boundaryGem, wireMaterial, 0);
+    boundary1.rotation.y  = Math.PI / 4;
+    boundary1.position.set(-90,120,-90)
+    scene.add(boundary1);
+
+    boundary2 = new Physijs.BoxMesh( boundaryGem, wireMaterial, 0);
+    boundary2.rotation.y  = Math.PI / 4;
+    boundary2.position.set(90,120,90)
+    scene.add(boundary2);
+
+    boundary3 = new Physijs.BoxMesh( boundaryGem, wireMaterial, 0);
+    boundary3.rotation.y  = -(Math.PI/4);
+    boundary3.position.set(90,120,-90)
+    scene.add(boundary3);
+
+    boundary4 = new Physijs.BoxMesh( boundaryGem, wireMaterial, 0);
+    boundary4.rotation.y  = -(Math.PI/4);
+    boundary4.position.set(-90,120,90)
+    scene.add(boundary4);
+
+    ceiling = new Physijs.BoxMesh(new THREE.BoxGeometry(250, 1, 250), wireMaterial, 0);
+    ceiling.rotation.y = Math.PI / 4;
+    ceiling.position.y = 250;
+    scene.add(ceiling);
+
+    // Clean
+    bl = [];
+    // setInterval( function(){
+    //     scene.remove(bl);
+    // }, 3000);
+
+    // CENTER BOX
+    var material = Physijs.createMaterial(
+        new THREE.MeshBasicMaterial({ color: 0x888888 }),
+        .8,  // high friction
+        .3   // low restitution
+    );
+    // Create a cube with friction of .8 and restitution of .3
+    var cube = new Physijs.BoxMesh( new THREE.BoxGeometry( 30, 30, 30 ), material);
+    cube.position.set(50,50,50);
+    scene.add(cube);
+
+    // PLAYER 1
+    p1 = new Character( { color: 0x00FF00 } );
+    // p1.mesh.scale.set(0.25,0.25,0.25);
+    p1.mesh.position.set(-60,15,50);
+    scene.add(p1.mesh);
+    scene.add(p1.physicMesh);
+    p1.pointer.position.set(camera.position.x,camera.position.y,camera.position.z);
+    $("<div>").attr('id','p1hp').text("Player 1").css({ position:'absolute', textAlign: 'center', height:'20px', bottom: '24px', backgroundColor: 'green'}).css('left',2).appendTo("body");
+
+    // PLAYER 2
+    p2 = new Character( { color: 0x0000FF } );
+    // p2.mesh.scale.set(0.25,0.25,0.25);
+    p2.mesh.position.set(60,15,50);
+    scene.add(p2.mesh);
+    scene.add(p2.physicMesh);
+    p2.pointer.position.set(camera.position.x,camera.position.y,camera.position.z);
+    $("<div>").attr('id','p2hp').text("Player 2").css({ position:'absolute', textAlign: 'center', height:'20px', bottom: '2px', backgroundColor: 'blue'}).css('left',2).appendTo("body");
+
+    // var loader = new THREE.JSONLoader();
+    // loader.load('models/fleur.js', function(geometry2){
+    //   mesh = new THREE.Mesh(geometry2);
+    //   mesh.scale.set(1,1,1);
+    //   mesh.position.y= 50;
+    //   scene.add(mesh);
+    // });
+
     // var geometry = new THREE.SphereGeometry( 15, 15, 8 );
     // var material = new THREE.MeshLambertMaterial( { color: 0x000088, transparent: true, opacity: 0.5 } );
     // mesh = new THREE.Mesh( geometry, material );
@@ -139,66 +190,6 @@ var Game = {
     // var sprite = new THREE.Sprite( spriteMaterial );
     // sprite.scale.set(100, 100, 1.0);
     // mesh.add(sprite); // this centers the glow at the mesh
-
-    // BOUNDARY WALLS
-    var wireMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true } );
-    var boundaryGem= new THREE.BoxGeometry( 250, 250, 20);
-    boundary1 = new Physijs.BoxMesh( boundaryGem, wireMaterial, 0);
-    boundary1.rotation.y  = Math.PI / 4;
-    boundary1.position.set(-90,90,-90)
-    scene.add(boundary1);
-
-    boundary2 = new Physijs.BoxMesh( boundaryGem, wireMaterial, 0);
-    boundary2.rotation.y  = Math.PI / 4;
-    boundary2.position.set(90,90,90)
-    scene.add(boundary2);
-
-    boundary3 = new Physijs.BoxMesh( boundaryGem, wireMaterial, 0);
-    boundary3.rotation.y  = -(Math.PI/4);
-    boundary3.position.set(90,90,-90)
-    scene.add(boundary3);
-
-    boundary4 = new Physijs.BoxMesh( boundaryGem, wireMaterial, 0);
-    boundary4.rotation.y  = -(Math.PI/4);
-    boundary4.position.set(-90,90,90)
-    scene.add(boundary4);
-
-    // Initialize collision array
-    // collidableMeshList = [];
-    // collidableMeshList.push(boundary);
-    // collidableMeshList.push(boundary2);
-    // collidableMeshList.push(boundary3);
-    // collidableMeshList.push(boundary4);
-
-    // PLAYER 1
-    p1 = new Character( { color: 0x00FF00, transparent: true, opacity: 0.5 } );
-    // p1.mesh.scale.set(0.25,0.25,0.25);
-    p1.mesh.position.set(-60,15,50);
-    scene.add(p1.mesh);
-    p1.pointer.position.set(camera.position.x,camera.position.y,camera.position.z);
-    $("<div>").attr('id','p1hp').text("Player 1").css({ position:'absolute', textAlign: 'center', height:'20px', bottom: '24px', backgroundColor: 'green'}).css('left',2).appendTo("body");
-
-    // PLAYER 2
-    p2 = new Character( { color: 0x0000FF, transparent: true, opacity: 0.5 } );
-    // p2.mesh.scale.set(0.25,0.25,0.25);
-    p2.mesh.position.set(60,15,50);
-    scene.add(p2.physicMesh);
-    scene.add(p2.mesh);
-    p2.pointer.position.set(camera.position.x,camera.position.y,camera.position.z);
-    $("<div>").attr('id','p2hp').text("Player 2").css({ position:'absolute', textAlign: 'center', height:'20px', bottom: '2px', backgroundColor: 'blue'}).css('left',2).appendTo("body");
-
-    bl = [];
-    // setInterval( function(){
-    //     scene.remove(bd);
-    // }, 3000);
-
-    // var loader = new THREE.JSONLoader();
-    // loader.load('models/fleur.js', function(geometry2){
-    //   mesh = new THREE.Mesh(geometry2);
-    //   mesh.scale.set(1,1,1);
-    //   mesh.position.y= 50;
-    //   scene.add(mesh);
-    // });
 
     animloop();
   } // end init
@@ -217,20 +208,21 @@ function render(){
 }
 
 function update(){
-  // camera, misc rotation update
+  // dynamic camera
   camera.lookAt( new THREE.Vector3((p1.mesh.position.x + p2.mesh.position.x)/2, (p1.mesh.position.y + p2.mesh.position.y)/2, (p1.mesh.position.z + p2.mesh.position.z)/2));
   var zoom = p1.mesh.position.distanceTo(p2.mesh.position)*0.5;
   if (zoom > 25 && zoom < 70){
     camera.fov = zoom;
   }
   camera.updateProjectionMatrix();
-  // p1.pointer.position.setY(p1.mesh.position.y);
-  // p1.mesh.lookAt(p1.pointer.position);
-  p2.pointer.position.setY(p2.mesh.position.y);
+  // character rotation physics update
+  p1.mesh.lookAt(p1.pointer.position);
+  p1.pointer.position.setY(p1.mesh.position.y);
   p2.mesh.lookAt(p2.pointer.position);
+  p2.pointer.position.setY(p2.mesh.position.y);
+  p1.mesh.position.set(p1.physicMesh.position.x,p1.physicMesh.position.y+5,p1.physicMesh.position.z)
   p2.mesh.position.set(p2.physicMesh.position.x,p2.physicMesh.position.y+5,p2.physicMesh.position.z)
   // collision detection
-  // collisions();
   p1.hitCollisions(p2);
   p2.hitCollisions(p1);
   // controller updates
@@ -251,34 +243,6 @@ function update(){
   // fps update
   stats.update();
 }
-
-// function p1HitCollisions(){
-//   var originPoint = p1.mesh.position.clone();
-//   for (var vertexIndex = 0; vertexIndex < p1.head.geometry.vertices.length; vertexIndex++){
-//     var localVertex = p1.head.geometry.vertices[vertexIndex].clone();
-//     var globalVertex = localVertex.applyMatrix4( p1.mesh.matrix );
-//     var directionVector = globalVertex.sub( p1.mesh.position );
-//     var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-//     var collisionResults = ray.intersectObjects( p2.hitMeshes );
-//     if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
-//       p1.hit();
-//     }
-//   }
-// }
-
-// function p2HitCollisions(){
-//   var originPoint = p2.mesh.position.clone();
-//   for (var vertexIndex = 0; vertexIndex < p2.head.geometry.vertices.length; vertexIndex++){
-//     var localVertex = p2.head.geometry.vertices[vertexIndex].clone();
-//     var globalVertex = localVertex.applyMatrix4( p2.mesh.matrix );
-//     var directionVector = globalVertex.sub( p2.mesh.position );
-//     var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-//     var collisionResults = ray.intersectObjects( p1.hitMeshes );
-//     if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
-//       p2.hit();
-//     }
-//   }
-// }
 
 // function collisions(){
 //   var originPoint = p1.mesh.position.clone();

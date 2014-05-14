@@ -60,7 +60,7 @@ var Character = Backbone.Model.extend({
     // Hit meshes array
     this.hitMeshes = [];
     // Physics
-    this.physicMesh = new Physijs.SphereMesh(head, material);
+    this.physicMesh = new Physijs.SphereMesh(head, new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.2 } ));
     // Movement boolean
     this.canMove = true;
     // Direction
