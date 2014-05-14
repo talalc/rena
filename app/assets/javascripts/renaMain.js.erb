@@ -75,6 +75,9 @@ var Game = {
     var light = new THREE.PointLight(0xffffff);
     light.position.set(100,200,100);
     scene.add(light);
+    var l2 = new THREE.PointLight(0xffffff);
+    l2.position.set(0,50,0);
+    scene.add(l2);
     // FLOOR
     // var floorTexture = new THREE.ImageUtils.loadTexture( '<%= asset_path 'sand_texture1023.jpg' %>' );
     // floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
@@ -189,7 +192,6 @@ var Game = {
     //     scene.remove(bd);
     // }, 3000);
 
-
     // var loader = new THREE.JSONLoader();
     // loader.load('models/fleur.js', function(geometry2){
     //   mesh = new THREE.Mesh(geometry2);
@@ -228,8 +230,8 @@ function update(){
   p2.mesh.lookAt(p2.pointer.position);
   // collision detection
   // collisions();
-  p1HitCollisions();
-  p2HitCollisions();
+  p1.hitCollisions(p2);
+  p2.hitCollisions(p1);
   // controller updates
   controls();
   p1.control();
@@ -238,7 +240,7 @@ function update(){
   $("#p1hp").css('width', p1.hp );
   $("#p2hp").css('width', p2.hp );
   // remove bl
-  if (bl.length > 2){
+  if (bl.length > 10){
     scene.remove(bl.pop());
     scene.remove(bl.pop());
     scene.remove(bl.pop());
@@ -247,40 +249,33 @@ function update(){
   stats.update();
 }
 
-function p1HitCollisions(){
-  var originPoint = p1.mesh.position.clone();
-  for (var vertexIndex = 0; vertexIndex < p1.head.geometry.vertices.length; vertexIndex++){
-    var localVertex = p1.head.geometry.vertices[vertexIndex].clone();
-    var globalVertex = localVertex.applyMatrix4( p1.mesh.matrix );
-    var directionVector = globalVertex.sub( p1.mesh.position );
-    var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-    var collisionResults = ray.intersectObjects( p2.hitMeshes );
-    if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
-      // console.log("P2 hit P1");
-      p1.hp -= 0.5;
-      // p1.mesh.position.set(p1.mesh.position.x,p1.mesh.position.y, p1.mesh.position.z);
-      var b = new Physijs.SphereMesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ), 50);
-      b.position.set(p1.mesh.position.x, p1.mesh.position.y, p1.mesh.position.z);
-      bl.push(b);
-      scene.add(b);
+// function p1HitCollisions(){
+//   var originPoint = p1.mesh.position.clone();
+//   for (var vertexIndex = 0; vertexIndex < p1.head.geometry.vertices.length; vertexIndex++){
+//     var localVertex = p1.head.geometry.vertices[vertexIndex].clone();
+//     var globalVertex = localVertex.applyMatrix4( p1.mesh.matrix );
+//     var directionVector = globalVertex.sub( p1.mesh.position );
+//     var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+//     var collisionResults = ray.intersectObjects( p2.hitMeshes );
+//     if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
+//       p1.hit();
+//     }
+//   }
+// }
 
-    }
-  }
-}
-
-function p2HitCollisions(){
-  var originPoint = p2.mesh.position.clone();
-  for (var vertexIndex = 0; vertexIndex < p2.head.geometry.vertices.length; vertexIndex++){
-    var localVertex = p2.head.geometry.vertices[vertexIndex].clone();
-    var globalVertex = localVertex.applyMatrix4( p2.mesh.matrix );
-    var directionVector = globalVertex.sub( p2.mesh.position );
-    var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-    var collisionResults = ray.intersectObjects( p1.hitMeshes );
-    if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
-      p2.hit();
-    }
-  }
-}
+// function p2HitCollisions(){
+//   var originPoint = p2.mesh.position.clone();
+//   for (var vertexIndex = 0; vertexIndex < p2.head.geometry.vertices.length; vertexIndex++){
+//     var localVertex = p2.head.geometry.vertices[vertexIndex].clone();
+//     var globalVertex = localVertex.applyMatrix4( p2.mesh.matrix );
+//     var directionVector = globalVertex.sub( p2.mesh.position );
+//     var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+//     var collisionResults = ray.intersectObjects( p1.hitMeshes );
+//     if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
+//       p2.hit();
+//     }
+//   }
+// }
 
 // function collisions(){
 //   var originPoint = p1.mesh.position.clone();

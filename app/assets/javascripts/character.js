@@ -210,6 +210,19 @@ var Character = Backbone.Model.extend({
     b.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z);
     bl.push(b);
     scene.add(b);
+  },
+  hitCollisions: function(otherPlayer){
+    var originPoint = this.mesh.position.clone();
+    for (var vertexIndex = 0; vertexIndex < this.head.geometry.vertices.length; vertexIndex++){
+      var localVertex = this.head.geometry.vertices[vertexIndex].clone();
+      var globalVertex = localVertex.applyMatrix4( this.mesh.matrix );
+      var directionVector = globalVertex.sub( this.mesh.position );
+      var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+      var collisionResults = ray.intersectObjects( otherPlayer.hitMeshes );
+      if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
+        this.hit();
+      }
+    }
   }
 
 });
