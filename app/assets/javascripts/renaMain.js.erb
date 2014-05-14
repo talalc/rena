@@ -17,14 +17,14 @@ var Game = {
     // SCENE
     // scene = new THREE.Scene();
     scene = new Physijs.Scene();
-    scene.setGravity(new THREE.Vector3( 0, -5, 0 ));
+    // scene.setGravity(new THREE.Vector3( 0, -5, 0 ));
     scene.addEventListener('update', function(){
       scene.simulate();
     });
     table_material = Physijs.createMaterial(
       new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( '<%= asset_path 'sand_texture1023.jpg' %>' ), ambient: 0xFFFFFF }),
-      .2, // high friction
-      .7 // low restitution
+      .9, // high friction
+      .2 // low restitution
     );
     table_material.map.wrapS = table_material.map.wrapT = THREE.RepeatWrapping;
     // table_material.map.repeat.set( 5, 5 );
@@ -51,6 +51,8 @@ var Game = {
         material
     );
     mesh.position.y = 50;
+    mesh.position.x = 50;
+    mesh.position.z = 50;
     scene.add(mesh);
     // scene.add(new THREE.AxisHelper(100));
     // scene.add(new THREE.GridHelper(100,10));
@@ -183,6 +185,11 @@ var Game = {
     $("<div>").attr('id','p2hp').text("Player 2").css({ position:'absolute', textAlign: 'center', height:'20px', bottom: '2px', backgroundColor: 'blue'}).css('left',2).appendTo("body");
 
     bl = [];
+    // setInterval( function(){
+    //     scene.remove(bd);
+    // }, 3000);
+
+
     // var loader = new THREE.JSONLoader();
     // loader.load('models/fleur.js', function(geometry2){
     //   mesh = new THREE.Mesh(geometry2);
@@ -230,6 +237,12 @@ function update(){
   // hp updates
   $("#p1hp").css('width', p1.hp );
   $("#p2hp").css('width', p2.hp );
+  // remove bl
+  if (bl.length > 2){
+    scene.remove(bl.pop());
+    scene.remove(bl.pop());
+    scene.remove(bl.pop());
+  }
   // fps update
   stats.update();
 }
@@ -243,18 +256,14 @@ function p1HitCollisions(){
     var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
     var collisionResults = ray.intersectObjects( p2.hitMeshes );
     if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
-      console.log("P2 hit P1");
+      // console.log("P2 hit P1");
       p1.hp -= 0.5;
-      p1.mesh.position.set(p1.mesh.position.x,p1.mesh.position.y, p1.mesh.position.z);
-      var b = new THREE.Mesh( new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ));
+      // p1.mesh.position.set(p1.mesh.position.x,p1.mesh.position.y, p1.mesh.position.z);
+      var b = new Physijs.SphereMesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ), 50);
       b.position.set(p1.mesh.position.x, p1.mesh.position.y, p1.mesh.position.z);
       bl.push(b);
       scene.add(b);
-      setTimeout( function(){
-        bl.forEach(function(bd){
-          scene.remove(bd);
-        });
-      }, 3000);
+
     }
   }
 }
@@ -268,34 +277,23 @@ function p2HitCollisions(){
     var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
     var collisionResults = ray.intersectObjects( p1.hitMeshes );
     if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
-      console.log("P1 hit P2");
-      p2.hp -= 0.5;
-      p2.mesh.position.set(p2.mesh.position.x,p2.mesh.position.y, p2.mesh.position.z);
-      var b = new THREE.Mesh( new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial( { color: 0xFF0000 } ));
-      b.position.set(p2.mesh.position.x, p2.mesh.position.y, p2.mesh.position.z);
-      bl.push(b);
-      scene.add(b);
-      setTimeout( function(){
-        bl.forEach(function(bd){
-          scene.remove(bd);
-        });
-      }, 3000);
+      p2.hit();
     }
   }
 }
 
-function collisions(){
-  var originPoint = p1.mesh.position.clone();
-  for (var vertexIndex = 0; vertexIndex < p1.head.geometry.vertices.length; vertexIndex++){
-    var localVertex = p1.head.geometry.vertices[vertexIndex].clone();
-    var globalVertex = localVertex.applyMatrix4( p1.mesh.matrix );
-    var directionVector = globalVertex.sub( p1.mesh.position );
-    var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-    var collisionResults = ray.intersectObjects( collidableMeshList );
-    if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
-      console.log("hit");
-      p1.hp -= 0.5;
-      p1.mesh.position.set(p1.mesh.position.x,p1.mesh.position.y, p1.mesh.position.z);
-    }
-  }
-}
+// function collisions(){
+//   var originPoint = p1.mesh.position.clone();
+//   for (var vertexIndex = 0; vertexIndex < p1.head.geometry.vertices.length; vertexIndex++){
+//     var localVertex = p1.head.geometry.vertices[vertexIndex].clone();
+//     var globalVertex = localVertex.applyMatrix4( p1.mesh.matrix );
+//     var directionVector = globalVertex.sub( p1.mesh.position );
+//     var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+//     var collisionResults = ray.intersectObjects( collidableMeshList );
+//     if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
+//       console.log("hit");
+//       p1.hp -= 0.5;
+//       p1.mesh.position.set(p1.mesh.position.x,p1.mesh.position.y, p1.mesh.position.z);
+//     }
+//   }
+// }

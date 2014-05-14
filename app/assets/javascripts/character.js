@@ -13,7 +13,7 @@ var Character = Backbone.Model.extend({
     this.mesh = new THREE.Object3D();
     this.mesh.position.y = 48;
     // Set and add its head
-    this.head = new Physijs.SphereMesh(head, material, 15);
+    this.head = new Physijs.SphereMesh(head, material);
     this.head.position.y = 0;
     this.mesh.add(this.head);
     // Set and add its hands
@@ -59,6 +59,10 @@ var Character = Backbone.Model.extend({
     this.isWalking = false;
     // Hit meshes array
     this.hitMeshes = [];
+    // Physics
+    this.physicMesh = new Physijs.SphereMesh(head, material);
+    // Movement boolean
+    this.canMove = true;
   },
   control: function(){
     if ( Math.abs(this.pad.axes[0]) > 0.2 || Math.abs(this.pad.axes[1]) > 0.2 ){
@@ -79,10 +83,12 @@ var Character = Backbone.Model.extend({
     }
   },
   move: function(deltaX, deltaZ){
-    this.walk();
-    this.mesh.position.x += deltaX;
-    this.mesh.position.z += deltaZ;
-    this.pointer.position.set(this.mesh.position.x + deltaX*15, this.mesh.position.y, this.mesh.position.z + deltaZ*15);
+    if (this.canMove){
+      this.walk();
+      this.mesh.position.x += deltaX;
+      this.mesh.position.z += deltaZ;
+      this.pointer.position.set(this.mesh.position.x + deltaX*15, this.mesh.position.y, this.mesh.position.z + deltaZ*15);
+    }
   },
   walk: function(){
     if (!this.isWalking){
@@ -191,6 +197,19 @@ var Character = Backbone.Model.extend({
     setTimeout( function(){
       clearInterval(step2);
     }, 400);
+  },
+  hit: function(){
+    this.canMove = false;
+    var _this = this;
+    setTimeout( function(){
+      _this.canMove = true;
+    }, 1000);
+    this.hp -= 0.5;
+    // this.mesh.position.set(this.mesh.position.x,this.mesh.position.y, this.mesh.position.z);
+    var b = new Physijs.SphereMesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0xFF1111 } ));
+    b.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z);
+    bl.push(b);
+    scene.add(b);
   }
 
 });
