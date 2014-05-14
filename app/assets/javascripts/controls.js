@@ -4,46 +4,10 @@ function controls(){
 
   if (gamepads.length > 0){
     p1.pad = gamepads[0];
-  //   if ( Math.abs(pad1.axes[0]) > 0.2 || Math.abs(pad1.axes[1]) > 0.2 ){
-  //     p1.move(pad1.axes[0],pad1.axes[1]);
-  //   }
-  //   if (pad1.buttons[0] == 1 || pad1.buttons[0].value == 1){
-  //     p1.jump();
-  //     setTimeout(function(){
-  //       p1.fall();
-  //     }, 400);
-  //   }
-  //   if (pad1.buttons[2] == 1 || pad1.buttons[2].value == 1){
-  //     p1.punch1();
-  //   }
-  //   if (pad1.buttons[3] == 1 || pad1.buttons[3].value == 1){
-  //     p1.punch2();
-  //   }
-  } // end if first controller found
-
+  }
   if (gamepads.length > 1){
     p2.pad = gamepads[1];
-  //   if ( Math.abs(pad2.axes[0]) > 0.2 ){
-  //     p2.mesh.position.x += pad2.axes[0];
-  //     p2.pointer.position.set(p2.mesh.position.x + pad2.axes[0]*15, p2.mesh.position.y, p2.mesh.position.z + pad2.axes[1]*15);
-  //   }
-  //   if ( Math.abs(pad2.axes[1]) > 0.2 ){
-  //     p2.mesh.position.z += pad2.axes[1];
-  //     p2.pointer.position.set(p2.mesh.position.x + pad2.axes[0]*15, p2.mesh.position.y, p2.mesh.position.z + pad2.axes[1]*15);
-  //   }
-  //   if (pad2.buttons[0] == 1 || pad2.buttons[0].value == 1){
-  //     p2.jump();
-  //     setTimeout(function(){
-  //       p2.fall();
-  //     }, 400);
-  //   }
-  //   if (pad2.buttons[2] == 1 || pad2.buttons[2].value == 1){
-  //     p2.punch1();
-  //   }
-  //   if (pad2.buttons[3] == 1 || pad2.buttons[3].value == 1){
-  //     p2.punch2();
-  //   }
-  } // end if second controller found
+  }
 
 //  360 dpad - in case would like to add support
 // if (pad1.axes[5] == 1){

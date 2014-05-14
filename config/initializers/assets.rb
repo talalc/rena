@@ -1,3 +1,5 @@
+Rails.application.config.assets.precompile += %w( three.js )
 Rails.application.config.assets.precompile += %w( renaMain.js )
+Rails.application.config.assets.precompile += %w( stats.min.js )
 Rails.application.config.assets.precompile += %w( character.js )
 Rails.application.config.assets.precompile += %w( controls.js )
