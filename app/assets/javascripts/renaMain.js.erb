@@ -21,23 +21,8 @@ var Game = {
     scene.addEventListener('update', function(){
       scene.simulate();
     });
-    table_material = Physijs.createMaterial(
-      new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( '<%= asset_path 'sand_texture1023.jpg' %>' ), ambient: 0xFFFFFF }),
-      .9, // high friction
-      .2 // low restitution
-    );
-    table_material.map.wrapS = table_material.map.wrapT = THREE.RepeatWrapping;
-    // table_material.map.repeat.set( 5, 5 );
-    table = new Physijs.BoxMesh(
-      new THREE.BoxGeometry(250, 1, 250),
-      table_material,
-      0, // mass
-      { restitution: .2, friction: .8 }
-    );
-    table.position.y = -17;
-    table.rotation.y = Math.PI / 4;
-    table.receiveShadow = true;
-    scene.add( table );
+    // scene.add(new THREE.AxisHelper(100));
+    // scene.add(new THREE.GridHelper(100,10));
     var friction = .8; // high friction
     var restitution = .3; // low restitution
     var material = Physijs.createMaterial(
@@ -47,15 +32,13 @@ var Game = {
     );
     // Create a cube with friction of .8 and restitution of .3
     var mesh = new Physijs.BoxMesh(
-        new THREE.BoxGeometry( 15, 15, 15 ),
+        new THREE.BoxGeometry( 30, 30, 30 ),
         material
     );
     mesh.position.y = 50;
     mesh.position.x = 50;
     mesh.position.z = 50;
     scene.add(mesh);
-    // scene.add(new THREE.AxisHelper(100));
-    // scene.add(new THREE.GridHelper(100,10));
     // CAMERA
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 4000 );
     camera.position.set(0,65,150);
@@ -79,6 +62,23 @@ var Game = {
     l2.position.set(0,50,0);
     scene.add(l2);
     // FLOOR
+    floor_material = Physijs.createMaterial(
+      new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( '<%= asset_path 'sand_texture1023.jpg' %>' ), ambient: 0xFFFFFF }),
+      .9, // high friction
+      .2 // low restitution
+    );
+    floor_material.map.wrapS = floor_material.map.wrapT = THREE.RepeatWrapping;
+    // floor_material.map.repeat.set( 5, 5 );
+    floor = new Physijs.BoxMesh(
+      new THREE.BoxGeometry(250, 1, 250),
+      floor_material,
+      0, // mass
+      { restitution: .2, friction: .8 }
+    );
+    floor.position.y = -17;
+    floor.rotation.y = Math.PI / 4;
+    floor.receiveShadow = true;
+    scene.add( floor );
     // var floorTexture = new THREE.ImageUtils.loadTexture( '<%= asset_path 'sand_texture1023.jpg' %>' );
     // floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
     // floorTexture.repeat.set( 10, 10 );
