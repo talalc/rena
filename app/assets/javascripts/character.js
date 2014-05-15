@@ -60,7 +60,7 @@ var Character = Backbone.Model.extend({
     // Hit meshes array
     this.hitMeshes = [];
     // Physics
-    this.physicMesh = new Physijs.SphereMesh(head, new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.2 } ), 5);
+    this.physicMesh = new Physijs.SphereMesh(head, new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.2 } ), 2000);
     // Movement boolean
     this.canMove = true;
     // Direction
@@ -75,10 +75,12 @@ var Character = Backbone.Model.extend({
           this.move(this.pad.axes[0],this.pad.axes[1]);
         }
       } else {
-        this.physicMesh.setLinearVelocity(new THREE.Vector3(0,-100,0));
+        // this.pointer.position.set(this.mesh.position.x , this.mesh.position.y, this.mesh.position.z );
+          // this.direction.set(this.physicMesh.getLinearVelocity().x,this.physicMesh.getLinearVelocity().y,this.physicMesh.getLinearVelocity().z);
+          // this.physicMesh.setLinearVelocity(this.direction);
       }
       if (this.pad.buttons[0] == 1 || this.pad.buttons[0].value == 1){
-        if (this.physicMesh._physijs.touches.length > 0){
+        if (this.physicMesh._physijs.touches.length == 1){
           this.jump();
         }
       }
@@ -93,12 +95,14 @@ var Character = Backbone.Model.extend({
       }
     }
   },
+
   move: function(deltaX, deltaZ){
     this.walk();
-    this.direction.set(deltaX*50,-100,deltaZ*50);
+    this.direction.set(deltaX*50,this.physicMesh.getLinearVelocity().y,deltaZ*50);
     this.physicMesh.setLinearVelocity(this.direction);
     this.pointer.position.set(this.mesh.position.x + deltaX*15, this.mesh.position.y, this.mesh.position.z + deltaZ*15);
   },
+
   walk: function(){
     if (!this.isWalking){
       this.isWalking = true;
@@ -110,9 +114,10 @@ var Character = Backbone.Model.extend({
       }, 400);
     }
   },
+
   jump: function(){
     this.physicMesh.setAngularVelocity(new THREE.Vector3(0,0,0));
-    this.physicMesh.applyCentralImpulse(new THREE.Vector3(0,4700,0));
+    this.physicMesh.applyCentralImpulse(new THREE.Vector3(0,25000,0));
   },
 
   punch1: function(){
@@ -138,18 +143,18 @@ var Character = Backbone.Model.extend({
     var direction = new THREE.Vector3( 0, 0, 1 );
     direction.applyMatrix4( matrix );
     var punch2 = new THREE.Mesh( new THREE.SphereGeometry(2), new THREE.MeshBasicMaterial(this.args) );
-    punch2.position.setFromMatrixPosition( this.hands.right.matrixWorld );
+    punch2.position.setFromMatrixPosition( this.hands.left.matrixWorld );
     this.hitMeshes.push(punch2);
     scene.add( punch2);
     var punchinterval = setInterval(function() {
       punch2.translateOnAxis(direction, 5);
-    }, 20);
+    }, 100);
     var _this = this;
     setTimeout( function(){
       clearInterval(punchinterval);
       _this.hitMeshes.pop();
       scene.remove( punch2 );
-    }, 400);
+    }, 800);
   },
 
   step1: function(){
@@ -193,6 +198,7 @@ var Character = Backbone.Model.extend({
       clearInterval(step2);
     }, 400);
   },
+
   hit: function(){
     this.canMove = false;
     var _this = this;
@@ -206,6 +212,7 @@ var Character = Backbone.Model.extend({
     }, 500);
     this.hp -= 1;
   },
+
   hitCollisions: function(otherPlayer){
     var originPoint = this.mesh.position.clone();
     for (var vertexIndex = 0; vertexIndex < this.head.geometry.vertices.length; vertexIndex++){

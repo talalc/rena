@@ -18,7 +18,7 @@ var Game = {
     // SCENE
     // scene = new THREE.Scene();
     scene = new Physijs.Scene();
-    // scene.setGravity(new THREE.Vector3( 0, -25, 0 ));
+    scene.setGravity(new THREE.Vector3( 0, -25, 0 ));
     scene.addEventListener('update', function(){
       scene.simulate();
     });
@@ -57,7 +57,7 @@ var Game = {
     // FLOOR
     floor_material = Physijs.createMaterial(
       new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( '<%= asset_path 'sand_texture1023.jpg' %>' ), ambient: 0xFFFFFF }),
-      .9, // high friction
+      1, // high friction
       .2 // low restitution
     );
     floor_material.map.wrapS = floor_material.map.wrapT = THREE.RepeatWrapping;
@@ -66,7 +66,7 @@ var Game = {
       new THREE.BoxGeometry(250, 1, 250),
       floor_material,
       0, // mass
-      { restitution: .2, friction: .8 }
+      { restitution: .2, friction: 1 }
     );
     floor.position.y = -1;
     floor.rotation.y = Math.PI / 4;
