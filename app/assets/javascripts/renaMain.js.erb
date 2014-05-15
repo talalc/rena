@@ -140,6 +140,7 @@ var Game = {
 
     // PLAYER 1
     p1 = new Character( { color: parseInt(p1color, 16) } );
+    p1.playerName = p1name;
     p1.mesh.position.set(-60,30,50);
     p1.physicMesh.position.set(-60,30,50);
     scene.add(p1.mesh);
@@ -150,7 +151,7 @@ var Game = {
 
     // PLAYER 2
     p2 = new Character( { color: parseInt(p2color, 16) } );
-    // p2.mesh.scale.set(0.25,0.25,0.25);
+    p2.playerName = p2name;
     p2.mesh.position.set(60,30,50);
     p2.physicMesh.position.set(60,30,50);
     scene.add(p2.mesh);
@@ -256,8 +257,10 @@ function update(){
     // check if winner
     if (p1.hp <= 0){
       p1.death();
+      p2.won();
     } else if (p2.hp <= 0){
       p2.death();
+      p1.won();
     }
   }
 }

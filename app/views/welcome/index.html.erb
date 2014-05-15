@@ -1,7 +1,7 @@
 <div align="center">
 
   <h1>Welcome to<br>
-    <span style="font-style: italic;font-weight: 700;font-size:2em;">Rena</span>
+    <span style="font-style: italic;font-weight: 700;font-size:2em;">r3na</span>
   </h1>
 
   <p>
@@ -9,10 +9,15 @@
   <%= color_field_tag 'player1color', "#FF0000" %>
   <%= text_field_tag 'player2name', nil, placeholder: 'Enter Player 2 Name' %>
   <%= color_field_tag 'player2color', "#0000FF"  %>
-
-    <%= link_to 'Enter the aRena', "#" %>
+  <%= link_to 'Enter the aRena', "#" %>
   </p>
+
+  <div id="matches">
+    <%= render @matches %>
+  </div>
+
 </div>
+
 <script type="text/javascript">
   var p1name, p1color, p2name, p2color;
   $("a").on('click', function(event){

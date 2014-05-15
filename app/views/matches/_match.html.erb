@@ -1,0 +1,12 @@
+<div class='match' style="background-color: #<%= match.p1color %>">
+  <%= match.p1name %>
+</div>
+<div class='match'>
+  <% if match.p1won %> defeated <% else %> submitted to <% end %>
+</div>
+<div  class='match' style="background-color: #<%= match.p2color %>">
+  <%= match.p2name %>
+</div>
+<div class='match'>
+  <%= time_ago_in_words(match.created_at) %> ago
+<div>

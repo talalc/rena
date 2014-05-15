@@ -296,6 +296,27 @@ var Character = Backbone.Model.extend({
       clearInterval(sheildInt);
       scene.remove( sheild );
     }, 100);
+  },
+
+  won: function(){
+    var _this = this;
+    $.ajax({
+      url: '/match',
+      type: 'post',
+      dataType: 'json',
+      data: { p1name: p1name, p1color: p1color, p1won: p1.isAlive, p2name: p2name, p2color: p2color, p2won: p2.isAlive}
+    }).done(function(data){
+      var wonDiv = $("<div>").attr('id','winner').html( _this.playerName + " Won!<br><br>").css({ position:'absolute', height: '115px', bottom: '15px', background: 'rgba(255, 255, 255, 0.8)', width: '200px' , borderRadius: '25px', textAlign: 'center'}).css('left',window.innerWidth/2 -100);
+      $("<a>").attr('href','#').attr('id','retry').html('Retry<br><br>').appendTo(wonDiv);
+      $("<a>").attr('href','#').attr('id','menu').html('return to Menu').appendTo(wonDiv);
+      wonDiv.appendTo("body");
+      $("#menu").on('click',function(event){
+        window.location.href = '/';
+      });
+      $("#retry").on('click',function(event){
+        window.location.reload();
+      });
+    });
   }
 
 });
