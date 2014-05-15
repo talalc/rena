@@ -5,7 +5,29 @@
   </h1>
 
   <p>
-    <%= link_to 'Enter the aRena', games_test_path %>
-  </p>
+  <%= text_field_tag 'player1name', nil, placeholder: 'Enter Player 1 Name' %>
+  <%= color_field_tag 'player1color', "#FF0000" %>
+  <%= text_field_tag 'player2name', nil, placeholder: 'Enter Player 2 Name' %>
+  <%= color_field_tag 'player2color', "#0000FF"  %>
 
+    <%= link_to 'Enter the aRena', "#" %>
+  </p>
 </div>
+<script type="text/javascript">
+  var p1name, p1color, p2name, p2color;
+  $("a").on('click', function(event){
+    if ($("#player1name").val()==""){
+      p1name = "Player 1";
+    } else {
+      p1name = $("#player1name").val();
+    }
+    if ($("#player2name").val()==""){
+      p2name = "Player 2";
+    } else {
+      p2name = $("#player2name").val();
+    }
+    p1color = $("#player1color").val().replace('#','');
+    p2color = $("#player2color").val().replace('#','');
+    window.location.href = "/game?p1name=" +p1name + "&p1color=" + p1color + "&p2name=" +p2name + "&p2color=" + p2color;
+  });
+</script>

@@ -139,26 +139,25 @@ var Game = {
     scene.add(cube);
 
     // PLAYER 1
-    p1 = new Character( { color: 0x00FF00 } );
-    // p1.mesh.scale.set(0.25,0.25,0.25);
+    p1 = new Character( { color: parseInt(p1color, 16) } );
     p1.mesh.position.set(-60,30,50);
     p1.physicMesh.position.set(-60,30,50);
     scene.add(p1.mesh);
     scene.add(p1.physicMesh);
     p1.pointer.position.set(camera.position.x,camera.position.y,camera.position.z);
-    $("<div>").attr('id','p1box').text("Player 1").css({ position:'absolute', height:'30px',paddingTop: '5px', top: '20px', background: 'rgba(255, 255, 255, 0.5)', width: 570, borderRadius: '25px'}).css('left',window.innerWidth/2 - 575).appendTo("body");
-    $("<div>").attr('id','p1hp').css({ position:'absolute', height:'20px', top: '28px', backgroundColor: 'green', borderRadius: '25px'}).css('left',window.innerWidth/2 - 510).appendTo("body");
+    $("<div>").attr('id','p1box').text(p1name).css({ position:'absolute', height:'30px',paddingTop: '5px', top: '20px', background: 'rgba(255, 255, 255, 0.5)', width: 570, borderRadius: '25px'}).css('left',window.innerWidth/2 - 575).appendTo("body");
+    $("<div>").attr('id','p1hp').css({ position:'absolute', height:'20px', top: '28px', backgroundColor: '#'+p1color, borderRadius: '25px'}).css('left',window.innerWidth/2 - 510).appendTo("body");
 
     // PLAYER 2
-    p2 = new Character( { color: 0x0000FF } );
+    p2 = new Character( { color: parseInt(p2color, 16) } );
     // p2.mesh.scale.set(0.25,0.25,0.25);
     p2.mesh.position.set(60,30,50);
     p2.physicMesh.position.set(60,30,50);
     scene.add(p2.mesh);
     scene.add(p2.physicMesh);
     p2.pointer.position.set(camera.position.x,camera.position.y,camera.position.z);
-    $("<div>").attr('id','p2box').text("Player 2").css({ position:'absolute', paddingTop: '5px',height:'30px', top: '20px', background: 'rgba(255, 255, 255, 0.5)', width: 570 , borderRadius: '25px', textAlign: 'right'}).css('right',window.innerWidth/2 - 590).appendTo("body");
-    $("<div>").attr('id','p2hp').css({ position:'absolute', height:'20px', top: '28px', backgroundColor: 'blue', borderRadius: '25px'}).css('right',window.innerWidth/2 - 525).appendTo("body");
+    $("<div>").attr('id','p2box').text(p2name).css({ position:'absolute', paddingTop: '5px',height:'30px', top: '20px', background: 'rgba(255, 255, 255, 0.5)', width: 570 , borderRadius: '25px', textAlign: 'right'}).css('right',window.innerWidth/2 - 590).appendTo("body");
+    $("<div>").attr('id','p2hp').css({ position:'absolute', height:'20px', top: '28px', backgroundColor: '#'+p2color, borderRadius: '25px'}).css('right',window.innerWidth/2 - 525).appendTo("body");
     // Collision event
     // p1.mesh.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
     // `this` has collided with `other_object` with an impact speed of `relative_velocity` and a rotational force of `relative_rotation` and at normal `contact_normal`
@@ -235,6 +234,8 @@ function update(){
     camera.updateProjectionMatrix();
     // character rotation physics update
     p1.mesh.lookAt(p1.pointer.position);
+    // p1.mesh.lookAt(new THREE.Vector3(p1.physicMesh.getAngularVelocity().x,p1.physicMesh.getAngularVelocity().y,p1.physicMesh.getAngularVelocity().z));
+    // p1.mesh.rotation.setFromRotationMatrix(p1.physicMesh.matrixWorld);
     p1.pointer.position.setY(p1.mesh.position.y);
     p2.mesh.lookAt(p2.pointer.position);
     p2.pointer.position.setY(p2.mesh.position.y);

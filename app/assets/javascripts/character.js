@@ -45,6 +45,12 @@ var Character = Backbone.Model.extend({
     this.nose.position.y = 0;
     this.nose.position.z = 8;
     this.mesh.add(this.nose);
+    // SHEILD
+    var sheild = new THREE.BoxGeometry(20,16,1);
+    this.sheild = new Physijs.BoxMesh(sheild, new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.0 } ) );
+    this.sheild.position.y = 0;
+    this.sheild.position.z = 12;
+    this.mesh.add(this.sheild);
     // Set the vector of the current motion
     this.direction = new THREE.Vector3(0, 0, 0);
     // Set the current animation step
@@ -60,7 +66,7 @@ var Character = Backbone.Model.extend({
     // Hit meshes array
     this.hitMeshes = [];
     // Physics
-    this.physicMesh = new Physijs.SphereMesh(head, new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.2 } ));
+    this.physicMesh = new Physijs.SphereMesh(head, new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.1 } ));
     // Movement boolean
     this.canMove = true;
     // Direction
@@ -74,7 +80,7 @@ var Character = Backbone.Model.extend({
       // console.log(relative_velocity);
       // console.log(relative_rotation);
       // console.log(contact_normal);
-      if (other_object.id == 30){
+      if (other_object.id == 31){
         _this.hp = 0;
       }
     });
@@ -94,7 +100,8 @@ var Character = Backbone.Model.extend({
         this.physicMesh.setAngularVelocity(new THREE.Vector3(0,0,0));
       }
       if (this.pad.buttons[0] == 1 || this.pad.buttons[0].value == 1){
-        if (this.physicMesh._physijs.touches.length == 1){
+        var touches = this.physicMesh._physijs.touches;
+        if (touches[0] == 1 || touches[0] == 2){
           this.jump();
         }
       }
@@ -106,6 +113,9 @@ var Character = Backbone.Model.extend({
       }
       if (this.pad.buttons[3] == 1 || this.pad.buttons[3].value == 1){
         this.punch2();
+      }
+      if (this.pad.buttons[1] == 1 || this.pad.buttons[1].value == 1){
+        this.useSheild();
       }
     }
   },
@@ -268,6 +278,24 @@ var Character = Backbone.Model.extend({
     scene.add(this.feet.left);
     scene.add(this.feet.right);
     scene.remove(this.physicMesh);
+  },
+
+  useSheild: function(){
+    var sheild = new Physijs.BoxMesh( new THREE.BoxGeometry(20,16,1), new THREE.MeshBasicMaterial({
+      // map: THREE.ImageUtils.loadTexture( '<%= asset_path 'cloud.png' %>' ),
+      // side: THREE.BackSide,
+      color: 0x00FFFF, transparent: true, opacity: 0.2
+    }), 0);
+    sheild.position.setFromMatrixPosition( this.sheild.matrixWorld );
+    sheild.rotation.setFromRotationMatrix( this.sheild.matrixWorld );
+    // sheild.matrix.set(this.sheild.matrixWorld);
+    var sheildInt = setInterval(function() {
+      scene.add(sheild);
+    }, 20);
+    setTimeout( function(){
+      clearInterval(sheildInt);
+      scene.remove( sheild );
+    }, 100);
   }
 
 });
