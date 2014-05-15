@@ -21,10 +21,12 @@ var Character = Backbone.Model.extend({
         left: new Physijs.SphereMesh(hand, material),
         right: new Physijs.SphereMesh(hand, material)
     };
-    this.hands.left.position.x = -10;
+    this.hands.left.position.x = -9;
     this.hands.left.position.y = -2;
-    this.hands.right.position.x = 10;
+    this.hands.left.position.z = 3;
+    this.hands.right.position.x = 9;
     this.hands.right.position.y = -2;
+    this.hands.right.position.z = 3;
     this.mesh.add(this.hands.left);
     this.mesh.add(this.hands.right);
     // Set and add its feet
@@ -32,10 +34,10 @@ var Character = Backbone.Model.extend({
         left: new Physijs.SphereMesh(foot, material),
         right: new Physijs.SphereMesh(foot, material)
     };
-    this.feet.left.position.x = -5;
+    this.feet.left.position.x = -4;
     this.feet.left.position.y = -12;
     this.feet.left.rotation.y = Math.PI / 4;
-    this.feet.right.position.x = 5;
+    this.feet.right.position.x = 4;
     this.feet.right.position.y = -12;
     this.feet.right.rotation.y = Math.PI / 4;
     this.mesh.add(this.feet.left);
@@ -48,7 +50,7 @@ var Character = Backbone.Model.extend({
     // SHEILD
     var sheild = new THREE.BoxGeometry(20,16,1);
     this.sheild = new Physijs.BoxMesh(sheild, new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.0 } ) );
-    this.sheild.position.y = 0;
+    this.sheild.position.y = 3;
     this.sheild.position.z = 12;
     this.mesh.add(this.sheild);
     // Set the vector of the current motion
@@ -69,8 +71,6 @@ var Character = Backbone.Model.extend({
     this.physicMesh = new Physijs.SphereMesh(head, new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.1 } ));
     // Movement boolean
     this.canMove = true;
-    // Direction
-    this.direction = new THREE.Vector3(0,0,0);
     // Attacking boolean
     this.attacking = false;
     // Collision Events
@@ -134,8 +134,14 @@ var Character = Backbone.Model.extend({
       var _this = this;
       setTimeout(function(){
         _this.step2();
-        _this.isWalking = false;
+      }, 200);
+      setTimeout(function(){
+        _this.step2();
       }, 400);
+      setTimeout(function(){
+        _this.step1();
+        _this.isWalking = false;
+      }, 600);
     }
   },
 
@@ -146,19 +152,20 @@ var Character = Backbone.Model.extend({
 
   punch1: function(){
     this.punchanim1();
-    var punch1 = new Physijs.SphereMesh( new THREE.SphereGeometry(4), new THREE.MeshBasicMaterial(this.args) );
+    var punch1 = new Physijs.SphereMesh( new THREE.SphereGeometry(4), new THREE.MeshBasicMaterial(this.args), 250 );
     var _this = this;
     setTimeout(function(){
       _this.punchanim2();
       punch1.position.setFromMatrixPosition( _this.hands.left.matrixWorld );
       scene.add( punch1);
+      console.log(punch1.mass);
       _this.hitMeshes.push(punch1);
-    }, 400);
+    }, 250);
     setTimeout(function(){
       _this.hitMeshes.pop();
       scene.remove( punch1 );
       _this.attacking = false;
-    }, 800);
+    }, 500);
   },
 
   punch2: function(){
@@ -186,10 +193,10 @@ var Character = Backbone.Model.extend({
     var step1 = setInterval(function() {
       _this.feet.left.position.z += 2;
       _this.feet.right.position.z -= 2;
-    }, 100);
+    }, 75);
     setTimeout( function(){
       clearInterval(step1);
-    }, 400);
+    }, 200);
   },
 
   step2: function(){
@@ -197,10 +204,10 @@ var Character = Backbone.Model.extend({
     var step2 = setInterval(function() {
       _this.feet.left.position.z -= 2;
       _this.feet.right.position.z += 2;
-    }, 100);
+    }, 75);
     setTimeout( function(){
       clearInterval(step2);
-    }, 400);
+    }, 200);
   },
 
   punchanim1: function(){
@@ -210,7 +217,7 @@ var Character = Backbone.Model.extend({
     }, 20);
     setTimeout( function(){
       clearInterval(step1);
-    }, 400);
+    }, 250);
   },
 
   punchanim2: function(){
@@ -220,7 +227,7 @@ var Character = Backbone.Model.extend({
     }, 20);
     setTimeout( function(){
       clearInterval(step2);
-    }, 400);
+    }, 250);
   },
 
   hit: function(){

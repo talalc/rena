@@ -7,4 +7,8 @@ describe Rena do
     expect(page).to have_content 'Rena'
   end
 
+  # it "should let me fill in name" do
+    # visit root_path
+  # end
+
 end
