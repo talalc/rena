@@ -13,13 +13,13 @@ var Character = Backbone.Model.extend({
     this.mesh = new THREE.Object3D();
     this.mesh.position.y = 12;
     // Set and add its head
-    this.head = new THREE.Mesh(head, material);
+    this.head = new Physijs.SphereMesh(head, material);
     this.head.position.y = 0;
     this.mesh.add(this.head);
     // Set and add its hands
     this.hands = {
-        left: new THREE.Mesh(hand, material),
-        right: new THREE.Mesh(hand, material)
+        left: new Physijs.SphereMesh(hand, material),
+        right: new Physijs.SphereMesh(hand, material)
     };
     this.hands.left.position.x = -10;
     this.hands.left.position.y = -2;
@@ -29,8 +29,8 @@ var Character = Backbone.Model.extend({
     this.mesh.add(this.hands.right);
     // Set and add its feet
     this.feet = {
-        left: new THREE.Mesh(foot, material),
-        right: new THREE.Mesh(foot, material)
+        left: new Physijs.SphereMesh(foot, material),
+        right: new Physijs.SphereMesh(foot, material)
     };
     this.feet.left.position.x = -5;
     this.feet.left.position.y = -12;
@@ -60,13 +60,26 @@ var Character = Backbone.Model.extend({
     // Hit meshes array
     this.hitMeshes = [];
     // Physics
-    this.physicMesh = new Physijs.SphereMesh(head, new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.2 } ), 2000);
+    this.physicMesh = new Physijs.SphereMesh(head, new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.2 } ));
     // Movement boolean
     this.canMove = true;
     // Direction
     this.direction = new THREE.Vector3(0,0,0);
     // Attacking boolean
     this.attacking = false;
+    // Collision Events
+    var _this = this;
+    this.physicMesh.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+      // console.log(other_object);
+      // console.log(relative_velocity);
+      // console.log(relative_rotation);
+      // console.log(contact_normal);
+      if (other_object.id == 30){
+        _this.hp = 0;
+      }
+    });
+    // Alive boolean
+    this.isAlive = true;
   },
   control: function(){
     if (this.pad){
@@ -74,10 +87,11 @@ var Character = Backbone.Model.extend({
         if (this.canMove){
           this.move(this.pad.axes[0],this.pad.axes[1]);
         }
-      } else {
+      } else if ( this.physicMesh._physijs.touches.length == 1 ) {
         // this.pointer.position.set(this.mesh.position.x , this.mesh.position.y, this.mesh.position.z );
           // this.direction.set(this.physicMesh.getLinearVelocity().x,this.physicMesh.getLinearVelocity().y,this.physicMesh.getLinearVelocity().z);
-          // this.physicMesh.setLinearVelocity(this.direction);
+        this.physicMesh.setLinearVelocity(new THREE.Vector3(0,0,0));
+        this.physicMesh.setAngularVelocity(new THREE.Vector3(0,0,0));
       }
       if (this.pad.buttons[0] == 1 || this.pad.buttons[0].value == 1){
         if (this.physicMesh._physijs.touches.length == 1){
@@ -98,7 +112,7 @@ var Character = Backbone.Model.extend({
 
   move: function(deltaX, deltaZ){
     this.walk();
-    this.direction.set(deltaX*50,this.physicMesh.getLinearVelocity().y,deltaZ*50);
+    this.direction.set(deltaX*75,this.physicMesh.getLinearVelocity().y,deltaZ*75);
     this.physicMesh.setLinearVelocity(this.direction);
     this.pointer.position.set(this.mesh.position.x + deltaX*15, this.mesh.position.y, this.mesh.position.z + deltaZ*15);
   },
@@ -117,7 +131,7 @@ var Character = Backbone.Model.extend({
 
   jump: function(){
     this.physicMesh.setAngularVelocity(new THREE.Vector3(0,0,0));
-    this.physicMesh.applyCentralImpulse(new THREE.Vector3(0,25000,0));
+    this.physicMesh.applyCentralImpulse(new THREE.Vector3(0,75000,0));
   },
 
   punch1: function(){
@@ -202,12 +216,11 @@ var Character = Backbone.Model.extend({
   hit: function(){
     this.canMove = false;
     var _this = this;
-    var b = new Physijs.SphereMesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0xFF1111 } ));
-    b.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z);
-    bl.push(b);
-    scene.add(b);
+    // var b = new Physijs.SphereMesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0xFF1111 } ));
+    // b.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z);
+    // scene.add(b);
     setTimeout( function(){
-      scene.remove(b);
+      // scene.remove(b);
       _this.canMove = true;
     }, 500);
     this.hp -= 1;
@@ -225,6 +238,36 @@ var Character = Backbone.Model.extend({
         this.hit();
       }
     }
+  },
+
+  death: function(){
+    var position = this.head.matrixWorld;
+    this.isAlive = false;
+    // this.mesh.rotateX(90);
+    // this.mesh.position(-5);
+    var bleedInt = setInterval(function() {
+      var b = new Physijs.SphereMesh( new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial( { color: 0xFF1111 } ));
+      b.position.setFromMatrixPosition( position );
+      scene.add(b);
+      b.translateOnAxis(new THREE.Vector3(0,0,0));
+    }, 100);
+    setTimeout( function(){
+      clearInterval(bleedInt);
+      scene.remove( b );
+    }, 5000);
+    this.head.position.setFromMatrixPosition( this.head.matrixWorld );
+    this.nose.position.setFromMatrixPosition( this.nose.matrixWorld );
+    this.hands.left.position.setFromMatrixPosition( this.hands.left.matrixWorld );
+    this.hands.right.position.setFromMatrixPosition( this.hands.right.matrixWorld );
+    this.feet.left.position.setFromMatrixPosition( this.feet.left.matrixWorld );
+    this.feet.right.position.setFromMatrixPosition( this.feet.right.matrixWorld );
+    scene.add(this.head);
+    scene.add(this.nose);
+    scene.add(this.hands.left);
+    scene.add(this.hands.right);
+    scene.add(this.feet.left);
+    scene.add(this.feet.right);
+    scene.remove(this.physicMesh);
   }
 
 });
