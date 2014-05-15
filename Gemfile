@@ -40,13 +40,17 @@ group :development, :test do
 # sets rails console to open in pry instead of irb
 # https://github.com/rweng/pry-rails
   gem 'pry-rails'
-# rspec for rails. set up with `rails g rpsec:install`
+# rspec for rails. set up with `rails g rspec:install`
 # https://github.com/rspec/rspec-rails
   gem 'rspec-rails'
 # one liners to test common rails functionality
 # https://github.com/thoughtbot/shoulda-matchers
   gem 'shoulda-matchers'
   gem 'capybara'
+  gem 'selenium-webdriver'
+  gem 'jasmine' #rails g jasmine:install
+  # gem 'simplecov', '~> 0.7.1', :require => false
+  gem 'coveralls', require: false
 # https://github.com/ctran/annotate_models
   gem 'annotate', ">=2.6.0"
   gem "rails-erd"

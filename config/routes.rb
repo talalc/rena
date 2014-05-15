@@ -1,3 +1,12 @@
+# == Route Map (Updated 2014-05-15 17:55)
+#
+#  Prefix Verb URI Pattern        Controller#Action
+#    root GET  /                  welcome#index
+#    game GET  /game(.:format)    games#match
+# matches GET  /matches(.:format) matches#index
+#   match POST /match(.:format)   matches#create
+#
+
 Rails.application.routes.draw do
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
