@@ -34,9 +34,11 @@ a {
 }
 
 .match {
-  display: inline-block;
+  display: inline;
   font-size: 20px;
-  padding: 10px 20px 10px 20px;
+  line-height: 80px;
+  padding: 20px;
+  border-radius: 50px;
 }
 
 input {

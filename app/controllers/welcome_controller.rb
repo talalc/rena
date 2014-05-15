@@ -1,7 +1,7 @@
 class WelcomeController < ApplicationController
 
   def index
-    @matches = Match.all
+    @matches = Match.last(15).reverse
   end
 
 end

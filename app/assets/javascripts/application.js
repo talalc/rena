@@ -17,7 +17,7 @@
 //= require three.min
 //= require ammo
 //= require physi
-Physijs.scripts.worker = "<%= asset_path 'physijs_worker.js' %>";
-Physijs.scripts.ammo = "<%= asset_path 'ammo.js' %>";
-//= require physijs_worker
+// Physijs.scripts.worker = "<%= asset_path 'physijs_worker.js' %>";
+// Physijs.scripts.ammo = "<%= asset_path 'ammo.js' %>";
+// require physijs_worker
 
