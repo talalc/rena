@@ -88,35 +88,40 @@ var Character = Backbone.Model.extend({
     this.isAlive = true;
   },
   control: function(){
-    if (this.pad){
-      if ( Math.abs(this.pad.axes[0]) > 0.2 || Math.abs(this.pad.axes[1]) > 0.2 ){
-        if (this.canMove){
-          this.move(this.pad.axes[0],this.pad.axes[1]);
-        }
-      } else if ( this.physicMesh._physijs.touches.length == 1 ) {
-        // this.pointer.position.set(this.mesh.position.x , this.mesh.position.y, this.mesh.position.z );
-          // this.direction.set(this.physicMesh.getLinearVelocity().x,this.physicMesh.getLinearVelocity().y,this.physicMesh.getLinearVelocity().z);
-        this.physicMesh.setLinearVelocity(new THREE.Vector3(0,0,0));
-        this.physicMesh.setAngularVelocity(new THREE.Vector3(0,0,0));
+    if ( Math.abs(this.pad.axes[0]) > 0.2 || Math.abs(this.pad.axes[1]) > 0.2 ){
+      if (this.canMove){
+        this.move(this.pad.axes[0],this.pad.axes[1]);
       }
-      if (this.pad.buttons[0] == 1 || this.pad.buttons[0].value == 1){
-        var touches = this.physicMesh._physijs.touches;
-        if (touches[0] == 1 || touches[0] == 2){
-          this.jump();
-        }
+    } else if ( this.physicMesh._physijs.touches.length == 1 ) {
+      this.physicMesh.setLinearVelocity(new THREE.Vector3(0,0,0));
+      this.physicMesh.setAngularVelocity(new THREE.Vector3(0,0,0));
+      // this.pointer.position.set(this.mesh.position.x , this.mesh.position.y, this.mesh.position.z );
+      // this.direction.set(this.physicMesh.getLinearVelocity().x,this.physicMesh.getLinearVelocity().y,this.physicMesh.getLinearVelocity().z);
+    }
+    if (this.pad.buttons[0] == 1 || this.pad.buttons[0].value == 1){
+      var touches = this.physicMesh._physijs.touches;
+      if (touches[0] == 1){
+        this.jump();
+        //  || touches[0] == 2 if box collision
       }
-      if (this.pad.buttons[2] == 1 || this.pad.buttons[2].value == 1){
-        if (!this.attacking){
-          this.attacking = true;
-          this.punch1();
-        }
+    }
+    if (this.pad.buttons[2] == 1 || this.pad.buttons[2].value == 1){
+      if (!this.attacking){
+        this.attacking = true;
+        this.punch1();
       }
-      if (this.pad.buttons[3] == 1 || this.pad.buttons[3].value == 1){
-        this.punch2();
+    }
+    if (this.pad.buttons[3] == 1 || this.pad.buttons[3].value == 1){
+      if (!this.attacking){
+        this.attacking = true;
+        this.energyBall1();
       }
-      if (this.pad.buttons[1] == 1 || this.pad.buttons[1].value == 1){
-        this.useSheild();
-      }
+    }
+    if (this.pad.buttons[1] == 1 || this.pad.buttons[1].value == 1){
+      this.useSheild();
+    }
+    if (this.pad.buttons[5] == 1 || this.pad.buttons[5].value == 1){
+      this.beam();
     }
   },
 
@@ -152,13 +157,12 @@ var Character = Backbone.Model.extend({
 
   punch1: function(){
     this.punchanim1();
-    var punch1 = new Physijs.SphereMesh( new THREE.SphereGeometry(4), new THREE.MeshBasicMaterial(this.args), 250 );
+    var punch1 = new Physijs.SphereMesh( new THREE.SphereGeometry(4), new THREE.MeshBasicMaterial(this.args), 1500 );
     var _this = this;
     setTimeout(function(){
       _this.punchanim2();
       punch1.position.setFromMatrixPosition( _this.hands.left.matrixWorld );
       scene.add( punch1);
-      console.log(punch1.mass);
       _this.hitMeshes.push(punch1);
     }, 250);
     setTimeout(function(){
@@ -168,7 +172,7 @@ var Character = Backbone.Model.extend({
     }, 500);
   },
 
-  punch2: function(){
+  beam: function(){
     var matrix = new THREE.Matrix4();
     matrix.extractRotation( this.mesh.matrix );
     var direction = new THREE.Vector3( 0, 0, 1 );
@@ -179,13 +183,32 @@ var Character = Backbone.Model.extend({
     scene.add( punch2);
     var punchinterval = setInterval(function() {
       punch2.translateOnAxis(direction, 5);
-    }, 100);
+    }, 60);
     var _this = this;
     setTimeout( function(){
       clearInterval(punchinterval);
       _this.hitMeshes.pop();
       scene.remove( punch2 );
-    }, 800);
+    }, 400);
+  },
+
+  energyBall1: function(){
+    var matrix = new THREE.Matrix4();
+    matrix.extractRotation( this.mesh.matrix );
+    var direction = new THREE.Vector3( 0, 0, 1 );
+    direction.applyMatrix4( matrix );
+    var ball = new Physijs.SphereMesh( new THREE.SphereGeometry(8), new THREE.MeshBasicMaterial(this.args) );
+    ball.position.setFromMatrixPosition( this.hands.right.matrixWorld );
+    this.hitMeshes.push(ball);
+    scene.add( ball);
+    ball.setAngularVelocity(new THREE.Vector3(0,0,0));
+    ball.applyCentralImpulse(direction.multiplyScalar(1000000));
+    var _this = this;
+    setTimeout( function(){
+      _this.hitMeshes.pop();
+      scene.remove( ball );
+      _this.attacking = false;
+    }, 1000);
   },
 
   step1: function(){
@@ -213,8 +236,8 @@ var Character = Backbone.Model.extend({
   punchanim1: function(){
     var _this = this;
     var step1 = setInterval(function() {
-      _this.hands.left.position.z += 1;
-    }, 20);
+      _this.hands.left.position.z += 4;
+    }, 50);
     setTimeout( function(){
       clearInterval(step1);
     }, 250);
@@ -223,8 +246,8 @@ var Character = Backbone.Model.extend({
   punchanim2: function(){
     var _this = this;
     var step2 = setInterval(function() {
-      _this.hands.left.position.z -= 1;
-    }, 20);
+      _this.hands.left.position.z -= 4;
+    }, 50);
     setTimeout( function(){
       clearInterval(step2);
     }, 250);

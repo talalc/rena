@@ -234,21 +234,28 @@ function update(){
     }
     camera.updateProjectionMatrix();
     // character rotation physics update
-    p1.mesh.lookAt(p1.pointer.position);
-    // p1.mesh.lookAt(new THREE.Vector3(p1.physicMesh.getAngularVelocity().x,p1.physicMesh.getAngularVelocity().y,p1.physicMesh.getAngularVelocity().z));
-    // p1.mesh.rotation.setFromRotationMatrix(p1.physicMesh.matrixWorld);
-    p1.pointer.position.setY(p1.mesh.position.y);
-    p2.mesh.lookAt(p2.pointer.position);
-    p2.pointer.position.setY(p2.mesh.position.y);
+    p1.physicMesh.setAngularVelocity(new THREE.Vector3(0,0,0));
+    p2.physicMesh.setAngularVelocity(new THREE.Vector3(0,0,0));
     p1.mesh.position.set(p1.physicMesh.position.x,p1.physicMesh.position.y+5,p1.physicMesh.position.z)
     p2.mesh.position.set(p2.physicMesh.position.x,p2.physicMesh.position.y+5,p2.physicMesh.position.z)
+    p1.mesh.lookAt(p1.pointer.position);
+    p2.mesh.lookAt(p2.pointer.position);
+    p1.pointer.position.setY(p1.mesh.position.y);
+    p2.pointer.position.setY(p2.mesh.position.y);
+    // p1.mesh.lookAt(p1.direction);
+    // p1.mesh.lookAt(new THREE.Vector3(p1.physicMesh.getAngularVelocity().x,p1.physicMesh.getAngularVelocity().y,p1.physicMesh.getAngularVelocity().z));
+    // p1.mesh.rotation.setFromRotationMatrix(p1.physicMesh.matrixWorld);
     // collision detection
     p1.hitCollisions(p2);
     p2.hitCollisions(p1);
     // controller updates
     controls();
-    p1.control();
-    p2.control();
+    if (p1.pad){
+      p1.control();
+    }
+    if (p2.pad){
+      p2.control();
+    }
     // hp updates
     $("#p1hp").css('width', p1.hp/2 );
     $("#p2hp").css('width', p2.hp/2 );
@@ -262,6 +269,16 @@ function update(){
       p2.death();
       p1.won();
     }
+  }
+}
+
+function controls(){
+  gamepads = navigator.webkitGetGamepads() || navigator.getGamepads();
+  if (gamepads.length > 0){
+    p1.pad = gamepads[0];
+  }
+  if (gamepads.length > 1){
+    p2.pad = gamepads[1];
   }
 }
 

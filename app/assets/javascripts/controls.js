@@ -1,12 +1,12 @@
-function controls(){
-  gamepads = navigator.webkitGetGamepads() || navigator.getGamepads();
-  if (gamepads.length > 0){
-    p1.pad = gamepads[0];
-  }
-  if (gamepads.length > 1){
-    p2.pad = gamepads[1];
-  }
-}
+// function controls(){
+//   gamepads = navigator.webkitGetGamepads() || navigator.getGamepads();
+//   if (gamepads.length > 0){
+//     p1.pad = gamepads[0];
+//   }
+//   if (gamepads.length > 1){
+//     p2.pad = gamepads[1];
+//   }
+// }
 
 //  360 dpad - in case would like to add support
 // if (pad1.axes[5] == 1){
