@@ -10,3 +10,5 @@ rena
 [link to PivotalTracker](https://www.pivotaltracker.com/s/projects/1077934)
 
 [![Build Status](https://travis-ci.org/talalc/rena.svg?branch=master)](https://travis-ci.org/talalc/rena)
+
+[![Coverage Status](https://coveralls.io/repos/talalc/rena/badge.png)](https://coveralls.io/r/talalc/rena)
