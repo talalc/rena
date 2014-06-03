@@ -9,8 +9,10 @@ window.requestAnimFrame = (function(){
             window.setTimeout(callback, 1000 / 60);
           };
 })();
+
 // GLOBAL VARIABLES
-var scene, camera, renderer, p1, p2, bl;
+var scene, camera, renderer, p1, p2;
+
 var Game = {
 
   initialize: function(){
@@ -68,6 +70,20 @@ var Game = {
     floor.receiveShadow = true;
     scene.add( floor );
 
+    // LOWER FLOOR
+    var lowerFloor_material = Physijs.createMaterial(
+      new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( '<%= asset_path 'water.jpg' %>' ), ambient: 0xFFFFFF }),
+      1.0, // high friction
+      .2 // low restitution
+    );
+    lowerFloor_material.map.wrapS = lowerFloor_material.map.wrapT = THREE.RepeatWrapping;
+    // lowerFloor_material.map.repeat.set( 5, 5 );
+    lowerFloor = new Physijs.BoxMesh(new THREE.BoxGeometry(4000, 1, 4000), lowerFloor_material, 0);
+    lowerFloor.position.y = -75;
+    lowerFloor.rotation.y = Math.PI / 4;
+    // lowerFloor.receiveShadow = true;
+    scene.add( lowerFloor );
+
     // SKYBOX
     var skyGeometry = new THREE.BoxGeometry( 1000, 1000, 1000 );
     var materialArray = [];
@@ -99,34 +115,6 @@ var Game = {
     var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
     scene.add( skyBox );
 
-    // BOUNDARY WALLS
-    // var wireMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true } );
-    // var boundaryGem= new THREE.BoxGeometry( 250, 250, 20);
-    // boundary1 = new Physijs.BoxMesh( boundaryGem, wireMaterial, 0);
-    // boundary1.rotation.y  = Math.PI / 4;
-    // boundary1.position.set(-90,120,-90)
-    // scene.add(boundary1);
-
-    // boundary2 = new Physijs.BoxMesh( boundaryGem, wireMaterial, 0);
-    // boundary2.rotation.y  = Math.PI / 4;
-    // boundary2.position.set(90,120,90)
-    // scene.add(boundary2);
-
-    // boundary3 = new Physijs.BoxMesh( boundaryGem, wireMaterial, 0);
-    // boundary3.rotation.y  = -(Math.PI/4);
-    // boundary3.position.set(90,120,-90)
-    // scene.add(boundary3);
-
-    // boundary4 = new Physijs.BoxMesh( boundaryGem, wireMaterial, 0);
-    // boundary4.rotation.y  = -(Math.PI/4);
-    // boundary4.position.set(-90,120,90)
-    // scene.add(boundary4);
-
-    // ceiling = new Physijs.BoxMesh(new THREE.BoxGeometry(250, 1, 250), wireMaterial, 0);
-    // ceiling.rotation.y = Math.PI / 4;
-    // ceiling.position.y = 250;
-    // scene.add(ceiling);
-
     // CENTER BOX
     var material = Physijs.createMaterial(
         new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture( '<%= asset_path 'crate.gif' %>' )}),
@@ -141,7 +129,6 @@ var Game = {
     // PLAYER 1
     p1 = new Character( { color: parseInt(p1color, 16) } );
     p1.playerName = p1name;
-    p1.mesh.position.set(-60,30,50);
     p1.physicMesh.position.set(-60,30,50);
     scene.add(p1.mesh);
     scene.add(p1.physicMesh);
@@ -152,62 +139,14 @@ var Game = {
     // PLAYER 2
     p2 = new Character( { color: parseInt(p2color, 16) } );
     p2.playerName = p2name;
-    p2.mesh.position.set(60,30,50);
     p2.physicMesh.position.set(60,30,50);
     scene.add(p2.mesh);
     scene.add(p2.physicMesh);
     p2.pointer.position.set(camera.position.x,camera.position.y,camera.position.z);
     $("<div>").attr('id','p2box').text(p2name).css({ position:'absolute', paddingTop: '5px',height:'30px', top: '20px', background: 'rgba(255, 255, 255, 0.5)', width: 570 , borderRadius: '25px', textAlign: 'right'}).css('right',window.innerWidth/2 - 590).appendTo("body");
     $("<div>").attr('id','p2hp').css({ position:'absolute', height:'20px', top: '28px', backgroundColor: '#'+p2color, borderRadius: '25px'}).css('right',window.innerWidth/2 - 525).appendTo("body");
-    // Collision event
-    // p1.mesh.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-    // `this` has collided with `other_object` with an impact speed of `relative_velocity` and a rotational force of `relative_rotation` and at normal `contact_normal`
-    //   debugger;
-    // });
-    // var loader = new THREE.JSONLoader();
-    // loader.load('models/fleur.js', function(geometry2){
-    //   mesh = new THREE.Mesh(geometry2);
-    //   mesh.scale.set(1,1,1);
-    //   mesh.position.y= 50;
-    //   scene.add(mesh);
-    // });
 
-    // var geometry = new THREE.SphereGeometry( 15, 15, 8 );
-    // var material = new THREE.MeshLambertMaterial( { color: 0x000088, transparent: true, opacity: 0.5 } );
-    // mesh = new THREE.Mesh( geometry, material );
-    // mesh.position.set(0,80,0);
-    // scene.add(mesh);
-    // SUPER SIMPLE GLOW EFFECT
-    // use sprite because it appears the same from all angles
-    // var spriteMaterial = new THREE.SpriteMaterial({
-    //   map: new THREE.ImageUtils.loadTexture( '<%= asset_path 'glow.png' %>' ),
-    //   useScreenCoordinates: false,
-    //   color: 0x0000ff, transparent: false, blending: THREE.AdditiveBlending
-    // });
-    // var sprite = new THREE.Sprite( spriteMaterial );
-    // sprite.scale.set(100, 100, 1.0);
-    // mesh.add(sprite); // this centers the glow at the mesh
-    // var waterTexture = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( '<%= asset_path 'water.jpg' %>' ), ambient: 0xFFFFFF });
-    // waterTexture.wrapS = waterTexture.wrapT = THREE.RepeatWrapping;
-    // waterTexture.transparent = true;
-    // var flatGeometry = new THREE.PlaneGeometry( 100,100 );
-    // var surface = new Physijs.PlaneMesh( flatGeometry, waterTexture );
-    // surface.position.set(0,-50,0);
-    // scene.add( surface );
-
-    var lowerFloor_material = Physijs.createMaterial(
-      new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture( '<%= asset_path 'water.jpg' %>' ), ambient: 0xFFFFFF }),
-      1.0, // high friction
-      .2 // low restitution
-    );
-    lowerFloor_material.map.wrapS = lowerFloor_material.map.wrapT = THREE.RepeatWrapping;
-    // lowerFloor_material.map.repeat.set( 5, 5 );
-    lowerFloor = new Physijs.BoxMesh(new THREE.BoxGeometry(4000, 1, 4000), lowerFloor_material, 0);
-    lowerFloor.position.y = -75;
-    lowerFloor.rotation.y = Math.PI / 4;
-    // lowerFloor.receiveShadow = true;
-    scene.add( lowerFloor );
-
+    // Start Animation loop
     animloop();
   } // end init
 
@@ -234,27 +173,27 @@ function update(){
     }
     camera.updateProjectionMatrix();
     // character rotation physics update
-    p1.physicMesh.setAngularVelocity(new THREE.Vector3(0,0,0));
-    p2.physicMesh.setAngularVelocity(new THREE.Vector3(0,0,0));
     p1.mesh.position.set(p1.physicMesh.position.x,p1.physicMesh.position.y+5,p1.physicMesh.position.z)
     p2.mesh.position.set(p2.physicMesh.position.x,p2.physicMesh.position.y+5,p2.physicMesh.position.z)
-    p1.mesh.lookAt(p1.pointer.position);
-    p2.mesh.lookAt(p2.pointer.position);
     p1.pointer.position.setY(p1.mesh.position.y);
     p2.pointer.position.setY(p2.mesh.position.y);
-    // p1.mesh.lookAt(p1.direction);
-    // p1.mesh.lookAt(new THREE.Vector3(p1.physicMesh.getAngularVelocity().x,p1.physicMesh.getAngularVelocity().y,p1.physicMesh.getAngularVelocity().z));
-    // p1.mesh.rotation.setFromRotationMatrix(p1.physicMesh.matrixWorld);
+    p1.mesh.lookAt(p1.pointer.position);
+    p2.mesh.lookAt(p2.pointer.position);
     // collision detection
     p1.hitCollisions(p2);
     p2.hitCollisions(p1);
     // controller updates
     controls();
+    // console.log(KeyboardJS.activeKeys());
     if (p1.pad){
       p1.control();
+    } else {
+      p1kbControls();
     }
     if (p2.pad){
       p2.control();
+    } else {
+      p2kbControls();
     }
     // hp updates
     $("#p1hp").css('width', p1.hp/2 );
@@ -273,7 +212,7 @@ function update(){
 }
 
 function controls(){
-  gamepads = navigator.webkitGetGamepads() || navigator.getGamepads();
+  var gamepads = navigator.getGamepads();
   if (gamepads.length > 0){
     p1.pad = gamepads[0];
   }
@@ -281,19 +220,3 @@ function controls(){
     p2.pad = gamepads[1];
   }
 }
-
-// function collisions(){
-//   var originPoint = p1.mesh.position.clone();
-//   for (var vertexIndex = 0; vertexIndex < p1.head.geometry.vertices.length; vertexIndex++){
-//     var localVertex = p1.head.geometry.vertices[vertexIndex].clone();
-//     var globalVertex = localVertex.applyMatrix4( p1.mesh.matrix );
-//     var directionVector = globalVertex.sub( p1.mesh.position );
-//     var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-//     var collisionResults = ray.intersectObjects( collidableMeshList );
-//     if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
-//       console.log("hit");
-//       p1.hp -= 0.5;
-//       p1.mesh.position.set(p1.mesh.position.x,p1.mesh.position.y, p1.mesh.position.z);
-//     }
-//   }
-// }
