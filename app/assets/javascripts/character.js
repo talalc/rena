@@ -102,13 +102,13 @@ var Character = Backbone.Model.extend({
       this.physicMesh.setLinearVelocity(new THREE.Vector3(0,this.physicMesh.getLinearVelocity().y,0));
     }
     if (this.pad.buttons[0] == 1 || this.pad.buttons[0].value == 1){
-      // var touches = this.physicMesh._physijs.touches;
-      // if (touches[0] == 1){
-      if (!this.isJumping){
+      var touches = this.physicMesh._physijs.touches;
+      if (touches[0] == 1){
+      // if (!this.isJumping){
         this.jump();
-      }
-        //  || touches[0] == 2 if box collision
       // }
+        //  || touches[0] == 2 if box collision
+      }
     }
     if (this.pad.buttons[2] == 1 || this.pad.buttons[2].value == 1){
       if (!this.attacking){
@@ -131,13 +131,13 @@ var Character = Backbone.Model.extend({
   },
 
   move: function(deltaX, deltaZ){
-    this.pointer.position.set(this.mesh.position.x + deltaX*1000, this.mesh.position.y, this.mesh.position.z + deltaZ*1000);
-    if (!this.isJumping){
-      this.walk(deltaX, deltaZ);
-      this.direction.set(deltaX*75,this.physicMesh.getLinearVelocity().y,deltaZ*75);
-      this.physicMesh.setLinearVelocity(this.direction);
+    this.walk(deltaX, deltaZ);
+    this.direction.set(deltaX*75,this.physicMesh.getLinearVelocity().y,deltaZ*75);
+    this.physicMesh.setLinearVelocity(this.direction);
+    // if (!this.isJumping){
+      this.pointer.position.set(this.mesh.position.x + deltaX*1000, this.mesh.position.y, this.mesh.position.z + deltaZ*1000);
       // this.physicMesh.applyCentralForce(new THREE.Vector3(deltaX*500000,0,deltaZ*500000));
-    }
+    // }
   },
 
   walk: function(x, z){
@@ -172,7 +172,7 @@ var Character = Backbone.Model.extend({
   jump: function(){
     this.isJumping = true;
     this.physicMesh.setLinearVelocity(new THREE.Vector3(this.physicMesh.getLinearVelocity().x/1.5,0,this.physicMesh.getLinearVelocity().z/1.5));
-    this.physicMesh.applyCentralImpulse(new THREE.Vector3(0,200000,0));
+    this.physicMesh.applyCentralImpulse(new THREE.Vector3(0,120000,0));
   },
 
   punch1: function(){

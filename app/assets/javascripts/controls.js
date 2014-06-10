@@ -21,7 +21,8 @@ function p1kbControls(){
     p1.physicMesh.setLinearVelocity(new THREE.Vector3(0,p1.physicMesh.getLinearVelocity().y,0));
   }
   if (KeyboardJS.activeKeys().indexOf("space") > -1){
-    if (!p1.isJumping){
+    var touches = p1.physicMesh._physijs.touches;
+    if (touches[0] == 1){
       p1.jump();
     }
   }
@@ -68,7 +69,8 @@ function p2kbControls(){
     p2.physicMesh.setLinearVelocity(new THREE.Vector3(0,p2.physicMesh.getLinearVelocity().y,0));
   }
   if (KeyboardJS.activeKeys().indexOf("num0") > -1){
-    if (!p2.isJumping){
+    var touches = p2.physicMesh._physijs.touches;
+    if (touches[0] == 1){
       p2.jump();
     }
   }
