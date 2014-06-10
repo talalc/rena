@@ -6,21 +6,22 @@
 
   <p>
   <%= text_field_tag 'player1name', nil, placeholder: 'Enter Player 1 Name' %>
-  <%= color_field_tag 'player1color', "#FF0000" %>
+  <%= color_field_tag 'player1color', "#FF0000" %> VS
   <%= text_field_tag 'player2name', nil, placeholder: 'Enter Player 2 Name' %>
   <%= color_field_tag 'player2color', "#0000FF"  %>
-  <%= link_to 'Enter the aRena', "#" %>
+  <%= link_to 'Enter the aRena', "#", id: "enter" %>
   </p>
 
   <div id="matches">
     <%= render @matches %>
   </div>
 
+last 15 of <%= @totalmatches %> matches played.
 </div>
 
 <script type="text/javascript">
   var p1name, p1color, p2name, p2color;
-  $("a").on('click', function(event){
+  $("#enter").on('click', function(event){
     if ($("#player1name").val()==""){
       p1name = "Player 1";
     } else {

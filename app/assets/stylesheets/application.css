@@ -45,3 +45,10 @@ input {
   font-size: 15px;
   border-radius: 5px;
 }
+
+#enter {
+  background-color: green;
+  padding: 4px;
+  color: white;
+  border-radius: 5px;
+}
