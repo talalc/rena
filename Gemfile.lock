@@ -200,7 +200,7 @@ DEPENDENCIES
   jasmine
   jbuilder (~> 2.0)
   jquery-rails
-  pg
+  pg (= 0.17.1)
   pry-rails
   rails (= 4.1.0)
   rails-erd
