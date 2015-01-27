@@ -1,5 +1,7 @@
+'use strict';
+
 // requestAnim shim layer by Paul Irish
-window.requestAnimFrame = (function(){
+window.requestAnimFrame = (function() {
   return  window.requestAnimationFrame       ||
           window.webkitRequestAnimationFrame ||
           window.mozRequestAnimationFrame    ||
@@ -10,18 +12,18 @@ window.requestAnimFrame = (function(){
           };
 })();
 
-// GLOBAL VARIABLES
+// GLOBAL VARIABLES (ARE EVIL!)
 var scene, camera, renderer, p1, p2;
 
 var Game = {
 
-  initialize: function(){
+  initialize: function() {
 
     // SCENE
     // scene = new THREE.Scene();
     scene = new Physijs.Scene();
     scene.setGravity(new THREE.Vector3( 0, -100, 0 ));
-    scene.addEventListener('update', function(){
+    scene.addEventListener('update', function() {
       scene.simulate();
     });
     // scene.add(new THREE.AxisHelper(100));
@@ -35,7 +37,7 @@ var Game = {
     // RENDERER
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
-    $("body").append( renderer.domElement );
+    $('body').append( renderer.domElement );
 
     // STATS
     stats = new Stats();
@@ -43,7 +45,7 @@ var Game = {
     stats.domElement.style.top = '2px';
     stats.domElement.style.left = '2px';
     stats.domElement.style.zIndex = 100;
-    $("body").append( stats.domElement );
+    $('body').append( stats.domElement );
 
     // LIGHTS
     var light = new THREE.PointLight(0xffffff);
@@ -133,8 +135,8 @@ var Game = {
     scene.add(p1.mesh);
     scene.add(p1.physicMesh);
     p1.pointer.position.set(camera.position.x,camera.position.y,camera.position.z);
-    $("<div>").attr('id','p1box').text(p1name).css({ position:'absolute', height:'30px',paddingTop: '5px', top: '20px', background: 'rgba(255, 255, 255, 0.5)', width: 570, borderRadius: '25px'}).css('left',window.innerWidth/2 - 575).appendTo("body");
-    $("<div>").attr('id','p1hp').css({ position:'absolute', height:'20px', top: '28px', backgroundColor: '#'+p1color, borderRadius: '25px'}).css('left',window.innerWidth/2 - 510).appendTo("body");
+    $('<div>').attr('id','p1box').text(p1name).css({ position:'absolute', height:'30px',paddingTop: '5px', top: '20px', background: 'rgba(255, 255, 255, 0.5)', width: 570, borderRadius: '25px'}).css('left',window.innerWidth/2 - 575).appendTo('body');
+    $('<div>').attr('id','p1hp').css({ position:'absolute', height:'20px', top: '28px', backgroundColor: '#'+p1color, borderRadius: '25px'}).css('left',window.innerWidth/2 - 510).appendTo('body');
 
     // PLAYER 2
     p2 = new Character( { color: parseInt(p2color, 16) } );
@@ -143,27 +145,27 @@ var Game = {
     scene.add(p2.mesh);
     scene.add(p2.physicMesh);
     p2.pointer.position.set(camera.position.x,camera.position.y,camera.position.z);
-    $("<div>").attr('id','p2box').text(p2name).css({ position:'absolute', paddingTop: '5px',height:'30px', top: '20px', background: 'rgba(255, 255, 255, 0.5)', width: 570 , borderRadius: '25px', textAlign: 'right'}).css('right',window.innerWidth/2 - 590).appendTo("body");
-    $("<div>").attr('id','p2hp').css({ position:'absolute', height:'20px', top: '28px', backgroundColor: '#'+p2color, borderRadius: '25px'}).css('right',window.innerWidth/2 - 525).appendTo("body");
+    $('<div>').attr('id','p2box').text(p2name).css({ position:'absolute', paddingTop: '5px',height:'30px', top: '20px', background: 'rgba(255, 255, 255, 0.5)', width: 570 , borderRadius: '25px', textAlign: 'right'}).css('right',window.innerWidth/2 - 590).appendTo('body');
+    $('<div>').attr('id','p2hp').css({ position:'absolute', height:'20px', top: '28px', backgroundColor: '#'+p2color, borderRadius: '25px'}).css('right',window.innerWidth/2 - 525).appendTo('body');
 
     // Start Animation loop
     animloop();
   } // end init
 
-} // end Game
+}
 
-function animloop(){
+function animloop() {
   scene.simulate();
   requestAnimFrame(animloop);
   render();
 };
 
-function render(){
+function render() {
   renderer.render( scene, camera );
   update();
 }
 
-function update(){
+function update() {
   if (p1.isAlive && p2.isAlive){
     // dynamic camera
     camera.lookAt( new THREE.Vector3((p1.mesh.position.x + p2.mesh.position.x)/2, (p1.mesh.position.y + p2.mesh.position.y)/2, (p1.mesh.position.z + p2.mesh.position.z)/2));
@@ -195,10 +197,12 @@ function update(){
     } else {
       p2kbControls();
     }
+
     // hp updates
-    $("#p1hp").css('width', p1.hp/2 );
-    $("#p2hp").css('width', p2.hp/2 );
+    $('#p1hp').css('width', p1.hp/2 );
+    $('#p2hp').css('width', p2.hp/2 );
     // fps update
+
     stats.update();
     // check if winner
     if (p1.hp <= 0){
@@ -211,7 +215,7 @@ function update(){
   }
 }
 
-function controls(){
+function controls() {
   var gamepads = navigator.getGamepads();
   if (gamepads.length > 0){
     p1.pad = gamepads[0];
