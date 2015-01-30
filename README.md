@@ -5,7 +5,7 @@
 
 *A 3D browser game inspired by [Capcom's Power Stone](http://en.wikipedia.org/wiki/Power_Stone)*
 
-![Power Stone Game Cover](https://raw.github.com/lsd/vim/master/power_stone.jpg)
+![Power Stone Game Cover](https://raw.githubusercontent.com/lsd/rena/updated-readme/power_stone.jpg)
 
 # Featurea
 
