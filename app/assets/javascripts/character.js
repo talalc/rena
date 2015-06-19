@@ -1,10 +1,9 @@
-'use strict';
+(function() {
+  'use strict';
 
 var Character = Backbone.Model.extend({
-  initialize: function (meshArgs) {
 
-    this.meshArgs = meshArgs;
-
+    initialize: function(args) {
     // Set the different geometries composing the humanoid
     var head = new THREE.SphereGeometry(8, 12, 12),
         hand = new THREE.SphereGeometry(2, 4, 4),
@@ -58,7 +57,6 @@ var Character = Backbone.Model.extend({
     this.nose.position.z = 8;
     this.mesh.add(this.nose);
 
-    // SHEILD
     var sheild = new THREE.BoxGeometry(20,16,1);
     this.sheild = new Physijs.BoxMesh(sheild, new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.0 } ) );
     this.sheild.position.y = 3;
@@ -74,7 +72,6 @@ var Character = Backbone.Model.extend({
 
     // Physics
     this.physicMesh = new Physijs.SphereMesh(head, new THREE.MeshBasicMaterial( { color: 0x00ff00, transparent: true, opacity: 0.1 } ));
-
     this.physicMesh.setAngularFactor(new THREE.Vector3(0,0,0));
     // Set the vector of the current motion
     this.direction = new THREE.Vector3(0, 0, 0);
@@ -110,27 +107,29 @@ var Character = Backbone.Model.extend({
     } else if (!this.isJumping){
       this.physicMesh.setLinearVelocity(new THREE.Vector3(0,this.physicMesh.getLinearVelocity().y,0));
     }
-    if (this.pad.buttons[0] == 1 || this.pad.buttons[0].value == 1){
+
+      var pad_button = this.pad.buttons[0];
+      if (1 == pad_buttons || 1 == pad_button.value) {
       var touches = this.physicMesh._physijs.touches;
-      if (touches[0] == 1){
-      // if (!this.isJumping){
+        if (1 == touches[0]) {
         this.jump();
-      // }
-        //  || touches[0] == 2 if box collision
       }
     }
+
     if (this.pad.buttons[2] == 1 || this.pad.buttons[2].value == 1){
       if (!this.attacking){
         this.attacking = true;
         this.punch1();
       }
     }
+
     if (this.pad.buttons[3] == 1 || this.pad.buttons[3].value == 1){
       if (!this.attacking){
         this.attacking = true;
         this.energyBall1();
       }
     }
+
     if (this.pad.buttons[1] == 1 || this.pad.buttons[1].value == 1){
       this.useSheild();
     }
@@ -143,22 +142,14 @@ var Character = Backbone.Model.extend({
     this.walk(deltaX, deltaZ);
     this.direction.set(deltaX*75,this.physicMesh.getLinearVelocity().y,deltaZ*75);
     this.physicMesh.setLinearVelocity(this.direction);
-    // if (!this.isJumping){
       this.pointer.position.set(this.mesh.position.x + deltaX*1000, this.mesh.position.y, this.mesh.position.z + deltaZ*1000);
-      // this.physicMesh.applyCentralForce(new THREE.Vector3(deltaX*500000,0,deltaZ*500000));
-    // }
   },
 
   walk: function(x, z){
     if (!this.isWalking){
+        var mag = 2;
+
       this.isWalking = true;
-      var mag = 2;
-      // if ( Math.abs(x) > Math.abs(z)) {
-      //   mag = Math.abs(x)*2;
-      // } else {
-      //   mag = Math.abs(z)*2;
-      // }
-      // console.log(mag);
       this.step1(mag);
       var self = this;
       setTimeout(function() {
@@ -170,6 +161,7 @@ var Character = Backbone.Model.extend({
       setTimeout(function() {
         self.step1(mag);
       }, 600);
+
       setTimeout(function() {
         self.isWalking = false;
         self.feet.left.position.z = 0;
@@ -362,24 +354,34 @@ var Character = Backbone.Model.extend({
   },
 
   won: function() {
-    var self = this;
-    $.ajax({
+      var self = this;
+      jQuery.ajax({
       url: '/match',
       type: 'post',
       dataType: 'json',
-      data: { p1name: p1name, p1color: p1color, p1won: p1.isAlive, p2name: p2name, p2color: p2color, p2won: p2.isAlive}
+        data: {
+          p1name: p1name,
+          p1color: p1color,
+          p1won: p1.isAlive,
+          p2name: p2name, p2color: p2color,
+          p2won: p2.isAlive
+        }
     }).done(function(data){
-      var wonDiv = $("<div>").attr('id','winner').html( self.playerName + " Won!<br><br>").css({ position:'absolute', height: '115px', bottom: '15px', background: 'rgba(255, 255, 255, 0.8)', width: '200px' , borderRadius: '25px', textAlign: 'center'}).css('left',window.innerWidth/2 -100);
-      $("<a>").attr('href','#').attr('id','retry').html('Retry<br><br>').appendTo(wonDiv);
-      $("<a>").attr('href','#').attr('id','menu').html('return to Menu').appendTo(wonDiv);
-      wonDiv.appendTo("body");
-      $("#menu").on('click',function(event){
+        var wonDiv = $('<div>').attr('id','winner').html( self.playerName + " Won!<br><br>").css({ position:'absolute', height: '115px', bottom: '15px', background: 'rgba(255, 255, 255, 0.8)', width: '200px' , borderRadius: '25px', textAlign: 'center'}).css('left',window.innerWidth/2 -100);
+        var $atag = $('<a>').attr('href','#');
+
+        $atag.attr('id', 'retry').html('Retry<br><br>').appendTo(wonDiv);
+        $atag.attr('id', 'menu').html('return to Menu').appendTo(wonDiv);
+        wonDiv.appendTo('body');
+
+        jQuery("#menu").click(function(event) {
         window.location.href = '/';
       });
-      $("#retry").on('click',function(event){
+
+        jQuery("#retry").click(function(event) {
         window.location.reload();
       });
     });
   }
-
 });
+}());
